@@ -27,3 +27,23 @@ $ set PORT=4000 && node app.js
 * 进场loading效果
 * Redux数据缓存
 
+### 利用Redux的数据来进行页面缓存
+
+```javascript
+// Recommend/index.js
+// .....
+
+useEffect(() => {
+    // 如果页面有数据，则不发请求
+    // immutable数据结构中长度属性size（数据缓存优化）
+    if (!bannerList.size) getBannerDataDispatch()
+    if (!recommendList.size) getRecommendListDataDispatch()
+    // eslint-disable-next-line
+  }, [])
+```
+
+## 本章核心知识强调
+
+* **scroll基础组件开发**
+* **数据层开发：主要是用Redux管理数据的那套流程必须烂熟于心**
+* **进场loading组件体验优化**
