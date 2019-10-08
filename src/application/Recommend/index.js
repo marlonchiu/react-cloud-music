@@ -5,6 +5,7 @@ import Slider from '../../components/slider'
 import RecommendList from '../../components/list'
 import Scroll from '../../baseUI/scroll/index'
 import { Content } from './style'
+import { forceCheck } from 'react-lazyload'
 
 function Recommend (props) {
   // mock数据
@@ -34,7 +35,7 @@ function Recommend (props) {
 
   return (
     <Content>
-      <Scroll className='list'>
+      <Scroll className='list' onScroll={forceCheck}>
         <div>
           <Slider bannerList={bannerListJS} />
           <RecommendList recommendList={recommendListJS} />
