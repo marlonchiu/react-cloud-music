@@ -20,3 +20,9 @@ $ set PORT=4000 && node app.js
 ## 业务实现思路（超级重要）
 
 [数据层开发](https://sanyuan0704.github.io/react-cloud-music/chapter3/redux.html)
+
+## 性能及体验优化
+
+* 图片懒加载
+* 进场loading效果
+* Redux数据缓存

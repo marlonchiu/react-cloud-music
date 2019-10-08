@@ -6,6 +6,7 @@ import RecommendList from '../../components/list'
 import Scroll from '../../baseUI/scroll/index'
 import { Content } from './style'
 import { forceCheck } from 'react-lazyload'
+import Loading from '../../baseUI/loading/index'
 
 function Recommend (props) {
   // mock数据
@@ -22,7 +23,7 @@ function Recommend (props) {
   //   }
   // })
 
-  const { bannerList, recommendList } = props
+  const { bannerList, recommendList, enterLoading } = props
   const { getBannerDataDispatch, getRecommendListDataDispatch } = props
   useEffect(() => {
     getBannerDataDispatch()
@@ -41,6 +42,7 @@ function Recommend (props) {
           <RecommendList recommendList={recommendListJS} />
         </div>
       </Scroll>
+      { enterLoading ? <Loading /> : null}  
     </Content>
   )
 }
@@ -49,7 +51,8 @@ function Recommend (props) {
 const mapStateToProps = (state) => ({
   // 不要再这里将数据toJS,不然每次diff比对props的时候都是不一样的引用，还是导致不必要的重渲染, 属于滥用immutable
   bannerList: state.getIn(['recommend', 'bannerList']),
-  recommendList: state.getIn(['recommend', 'recommendList'])
+  recommendList: state.getIn(['recommend', 'recommendList']),
+  enterLoading: state.getIn(['recommend', 'enterLoading'])
 })
 
 // 映射dispatch到props上

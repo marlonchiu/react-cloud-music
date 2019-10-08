@@ -13,6 +13,11 @@ export const changeRecommendList = (data) => ({
   data: fromJS(data)
 })
 
+export const changeEnterLoading = (data) => ({
+  type: actionTypes.CHANGE_ENTER_LOADING,
+  data
+})
+
 export const getBannerList = () => {
   return (dispatch) => {
     getBannnerRequest().then(data => {
@@ -29,6 +34,8 @@ export const getRecommendList = () => {
     getRecommendListRequest().then(data => {
       console.log(data)
       dispatch(changeRecommendList(data.result))
+      // 在获取推荐歌单后，应把loading状态改为false
+      dispatch(changeEnterLoading(false)) // 改变loading
     }).catch(() => {
       console.log('推荐歌单数据获取错误')
     })
