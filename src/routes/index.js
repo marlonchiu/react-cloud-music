@@ -8,13 +8,13 @@ import Rank from '../application/Rank'
 const routes = [
   {
     path: '/',
-    comments: Home,
+    component: Home,
     routes: [
       {
         path: '/',
         exact: true,
         render: () => (
-          <Redirect to={'/recommend'} />
+          <Redirect to='/recommend' />
         )
       },
       {

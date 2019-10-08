@@ -7,11 +7,13 @@ import { HashRouter } from 'react-router-dom'
 
 function App () {
   return (
-    <HashRouter>
-      <GlobalStyle />
-      <IconStyle />
-      {renderRoutes(routes)}
-    </HashRouter>
+    <div className='App'>
+      <HashRouter>
+        <GlobalStyle />
+        <IconStyle />
+        {renderRoutes(routes)}
+      </HashRouter>
+    </div>
   )
 }
 
