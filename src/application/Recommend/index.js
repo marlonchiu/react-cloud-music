@@ -26,8 +26,10 @@ function Recommend (props) {
   const { bannerList, recommendList, enterLoading } = props
   const { getBannerDataDispatch, getRecommendListDataDispatch } = props
   useEffect(() => {
-    getBannerDataDispatch()
-    getRecommendListDataDispatch()
+    // 如果页面有数据，则不发请求
+    // immutable数据结构中长度属性size（数据缓存优化）
+    if (!bannerList.size) getBannerDataDispatch()
+    if (!recommendList.size) getRecommendListDataDispatch()
     // eslint-disable-next-line
   }, [])
 
@@ -42,7 +44,7 @@ function Recommend (props) {
           <RecommendList recommendList={recommendListJS} />
         </div>
       </Scroll>
-      { enterLoading ? <Loading /> : null}  
+      {enterLoading ? <Loading /> : null}
     </Content>
   )
 }

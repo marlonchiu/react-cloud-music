@@ -26,3 +26,4 @@ $ set PORT=4000 && node app.js
 * 图片懒加载
 * 进场loading效果
 * Redux数据缓存
+
