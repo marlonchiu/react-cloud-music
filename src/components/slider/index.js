@@ -24,6 +24,10 @@ function Slider (props) {
 
   return (
     <SliderContainer>
+      {/* 为了解决多出显示的效果，轮播图一半融合 */}
+      {/* div 标签内部为空  为了报错标准语法 加入空字符串 */}
+      {/* https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/self-closing-comp.md */}
+      <div className='before'>{' '}</div>
       <div className='slider-container'>
         <div className='swiper-wrapper'>
           {
