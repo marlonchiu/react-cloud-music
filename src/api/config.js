@@ -19,6 +19,10 @@ export {
 // 歌手种类
 export const categoryTypes = [
   {
+    name: '入驻歌手',
+    key: '5001'
+  },
+  {
     name: '华语男',
     key: '1001'
   },
