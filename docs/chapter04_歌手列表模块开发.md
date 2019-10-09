@@ -390,3 +390,118 @@ export default combineReducers({
 })
 
 ```
+
+
+
+## Singers组件连接Redux数据
+
+```javascript
+import React, { useState, useEffect } from 'react'
+
+// 。。。。。。。。。。。。。。。。。。。。。。。第一步。。。。。。。。。。。。。。。。。
+import { connect } from 'react-redux'
+import * as actionCreators from './store/actionCreators'
+
+function Singers (props) {
+  const [category, setCategory] = useState('')
+  const [alpha, setAlpha] = useState('')
+  
+ // 。。。。。。。。。。。。。。。。。。。。。。。第四步。。。。。。。。。。。。。。。。。
+  const { singerList, enterLoading, pullUpLoading, pullDownLoading, pageCount } = props
+  const { getHotSingerListDataDispatch, getSingerListDataDispatch, pullDownRefreshDispatch, pullUpRefreshDispatch } = props
+
+  // 。。。。。。。。。。。。。。。。。。。。。。。第五步。。。。。。。。。。。。。。。。。
+  useEffect(() => {
+    getHotSingerListDataDispatch()
+    // eslint-disable-next-line
+  }, [])
+
+  const handleUpdateCatetory = (val) => {
+    setCategory(val)
+    getSingerListDataDispatch(category, val)
+  }
+  const handleUpdateAlpha = (val) => {
+    setAlpha(val)
+    getSingerListDataDispatch(category, val)
+  }
+
+  // 渲染函数，返回歌手列表
+  const renderSingerList = () => {
+    // 。。。。。。。。。。。。。。。。。。。。。。。第六步。。。。。。。。。。。。。。。。。
+    const singerListJS = singerList ? singerList.toJS() : []
+    // console.log(singerListJS)
+
+    return (
+      <List>
+        {
+          singerListJS.map((item, index) => {
+            return (
+              <ListItem key={item.accountId + '-' + index}>
+                <div className='img_wrapper'>
+                  <img src={item.picUrl + '?param=300x300'} width='100%' height='100%' alt='music' />
+                </div>
+                <span className='name'>{item.name}</span>
+              </ListItem>
+            )
+          })
+        }
+      </List>
+    )
+  }
+
+}
+
+// 。。。。。。。。。。。。。。。。。。。。。。。第二步。。。。。。。。。。。。。。。。。
+
+// 映射Redux全局的state到组件的props上
+const mapStateToProps = (state) => ({
+  // 不要再这里将数据toJS,不然每次diff比对props的时候都是不一样的引用，还是导致不必要的重渲染, 属于滥用immutable
+  singerList: state.getIn(['singers', 'singerList']),
+  enterLoading: state.getIn(['singers', 'enterLoading']),
+  pullUpLoading: state.getIn(['singers', 'pullUpLoading']),
+  pullDownLoading: state.getIn(['singers', 'pullDownLoading']),
+  pageCount: state.getIn(['singers', 'pageCount'])
+})
+
+// 映射dispatch到props上
+const mapDispatchToProps = (dispatch) => {
+  return {
+    // 热门歌手数据
+    getHotSingerListDataDispatch () {
+      dispatch(actionCreators.getHotSingerList())
+    },
+    // 歌手列表数据
+    getSingerListDataDispatch (category, alpha) {
+      // 由于改变了分类，所以pageCount清零
+      dispatch(actionCreators.changePageCount(0))
+      // loading，现在实现控制逻辑，效果实现放到下一节，后面的loading同理
+      dispatch(actionCreators.changeEnterLoading(true))
+      dispatch(actionCreators.getSingerList(category, alpha))
+    },
+    // 滑到最底部刷新部分的处理
+    pullUpRefreshDispatch (category, alpha, hot, count) {
+      dispatch(actionCreators.changePullUpLoading(true))
+      dispatch(actionCreators.changePageCount(count + 1))
+      if (hot) {
+        dispatch(actionCreators.refreshMoreHotSingerList())
+      } else {
+        dispatch(actionCreators.refreshMoreSingerList(category, alpha))
+      }
+    },
+    // 顶部下拉刷新
+    pullDownRefreshDispatch (category, alpha) {
+      dispatch(actionCreators.changePullDownLoading(true))
+      dispatch(actionCreators.changePageCount(0)) // 属于重新获取数据
+      if (category === '' && alpha === '') {
+        dispatch(actionCreators.getHotSingerList())
+      } else {
+        dispatch(actionCreators.getSingerList(category, alpha))
+      }
+    }
+  }
+}
+
+// 。。。。。。。。。。。。。。。。。。。。。。。第三步。。。。。。。。。。。。。。。。。
+export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Singers))
+
+```
