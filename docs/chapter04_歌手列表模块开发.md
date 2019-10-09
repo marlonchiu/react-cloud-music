@@ -709,5 +709,3 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Singers))
     }
   }
   ```
-
-  
