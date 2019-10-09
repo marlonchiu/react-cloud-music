@@ -6,7 +6,7 @@ import Scroll from '../../baseUI/scroll/index'
 import { connect } from 'react-redux'
 import * as actionCreators from './store/actionCreators'
 import Loading from '../../baseUI/loading/index'
-import  LazyLoad, { forceCheck } from 'react-lazyload'
+import LazyLoad, { forceCheck } from 'react-lazyload'
 // mock数据
 // const singerList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(item => {
 //   return {
@@ -30,7 +30,7 @@ function Singers (props) {
 
   const handleUpdateCatetory = (val) => {
     setCategory(val)
-    getSingerListDataDispatch(category, val)
+    getSingerListDataDispatch(val, alpha)
   }
   const handleUpdateAlpha = (val) => {
     setAlpha(val)

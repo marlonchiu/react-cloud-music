@@ -682,3 +682,32 @@ export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Singers))
   ```
 
 * 修改基础组件`loading`和增加基础组件`loading-v2`，看代码
+
+## 性能优化
+
+### 下拉刷新防抖处理
+
+* 当你频繁地下拉时，事实上事件回调函数也会被频繁触发，导致发送很多无意义的请求。因此这里对Scroll基础组件做一下防抖处理
+
+* 防抖方法
+
+  ```javascript
+  // src/api/utils.js
+  // ....
+  
+  // 防抖函数
+  export const debounce = (func, delay) => {
+    let timer
+    return function (...args) {
+      if (timer) {
+        clearTimeout(timer)
+      }
+      timer = setTimeout(() => {
+        func.apply(this, args)
+        clearTimeout(timer)
+      }, delay)
+    }
+  }
+  ```
+
+  
