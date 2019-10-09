@@ -5,7 +5,8 @@ import { NavContainer, ListContainer, List, ListItem } from './style'
 import Scroll from '../../baseUI/scroll/index'
 import { connect } from 'react-redux'
 import * as actionCreators from './store/actionCreators'
-
+import Loading from '../../baseUI/loading/index'
+import  LazyLoad, { forceCheck } from 'react-lazyload'
 // mock数据
 // const singerList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(item => {
 //   return {
@@ -35,6 +36,12 @@ function Singers (props) {
     setAlpha(val)
     getSingerListDataDispatch(category, val)
   }
+  const handlePullUp = () => {
+    pullUpRefreshDispatch(category, alpha, category === '', pageCount)
+  }
+  const handlePullDown = () => {
+    pullDownRefreshDispatch(category, alpha)
+  }
 
   // 渲染函数，返回歌手列表
   const renderSingerList = () => {
@@ -48,7 +55,9 @@ function Singers (props) {
             return (
               <ListItem key={item.accountId + '-' + index}>
                 <div className='img_wrapper'>
-                  <img src={item.picUrl + '?param=300x300'} width='100%' height='100%' alt='music' />
+                  <LazyLoad placeholder={<img width='100%' height='100%' src={require('./singer.png')} alt='singer' />}>
+                    <img src={`${item.picUrl}?param=300x300`} width='100%' height='100%' alt='singer' />
+                  </LazyLoad>
                 </div>
                 <span className='name'>{item.name}</span>
               </ListItem>
@@ -76,9 +85,16 @@ function Singers (props) {
         />
       </NavContainer>
       <ListContainer>
-        <Scroll>
+        <Scroll
+          onScroll={forceCheck}
+          pullUp={handlePullUp}
+          pullDown={handlePullDown}
+          pullUpLoading={pullUpLoading}
+          pullDownLoading={pullDownLoading}
+        >
           {renderSingerList()}
         </Scroll>
+        <Loading show={enterLoading} />
       </ListContainer>
     </div>
   )

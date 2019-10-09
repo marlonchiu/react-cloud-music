@@ -27,7 +27,7 @@ export const changePullUpLoading = (data) => ({
 
 // 顶部下拉刷新loading
 export const changePullDownLoading = (data) => ({
-  type: actionTypes.CHANGE_ENTER_LOADING,
+  type: actionTypes.CHANGE_PULLDOWN_LOADING,
   data
 })
 
