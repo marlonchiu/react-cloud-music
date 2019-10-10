@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import Header from '../../baseUI/header/index'
 import Scroll from '../../baseUI/scroll/index'
 import { Container, TopDesc, Menu, SongList, SongItem } from './style'
 import { getCount, getName, isEmptyObject } from '../../api/utils'
+import { HEADER_HEIGHT } from './../../api/config'
+import style from '../../assets/global-style'
+
 // mock数据
 const currentAlbum = {
   creator: {
@@ -89,9 +92,32 @@ const currentAlbum = {
 
 function Album (props) {
   const [showStatus, setShowStatus] = useState(true)
+  const [title, setTitle] = useState('歌单')
+  // 是否跑马灯
+  const [isMarquee, setIsMarquee] = useState(false)
+
+  const headerEl = useRef()
 
   const handleBack = () => {
     setShowStatus(false)
+  }
+
+  const handleScroll = (pos) => {
+    const minScrollY = -HEADER_HEIGHT
+    const percent = Math.abs(pos.y / minScrollY)
+    const headerDom = headerEl.current
+    // 滑过顶部的高度开始变化
+    if (pos.y < minScrollY) {
+      headerDom.style.backgroundColor = style['theme-color']
+      headerDom.style.opacity = Math.min(1, (percent - 1) / 2)
+      setTitle(currentAlbum.name)
+      setIsMarquee(true)
+    } else {
+      headerDom.style.backgroundColor = ''
+      headerDom.style.opacity = 1
+      setTitle('歌单')
+      setIsMarquee(false)
+    }
   }
 
   // 在退出动画执行结束时跳转路由
@@ -106,9 +132,9 @@ function Album (props) {
       onExited={props.history.goBack}
     >
       <Container>
-        <Header title='返回' handleClick={handleBack} />
+        <Header ref={headerEl} title={title} isMarquee={isMarquee} handleClick={handleBack} />
         {/* 布局代码 */}
-        <Scroll bounceTop={false}>
+        <Scroll bounceTop={false} onScroll={handleScroll}>
           <div>
             <TopDesc background={currentAlbum.coverImgUrl}>
               <div className='background'>
