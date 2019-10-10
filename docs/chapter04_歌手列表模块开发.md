@@ -416,7 +416,7 @@ function Singers (props) {
 
   const handleUpdateCatetory = (val) => {
     setCategory(val)
-    getSingerListDataDispatch(category, val)
+    getSingerListDataDispatch(val, alpha)
   }
   const handleUpdateAlpha = (val) => {
     setAlpha(val)
