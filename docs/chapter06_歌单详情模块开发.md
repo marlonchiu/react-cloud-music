@@ -40,5 +40,3 @@
     {renderRoutes(props.route.routes)}
   </Content>
   ```
-
-  
