@@ -13,7 +13,6 @@ const HeaderContainer = styled.div`
   display: flex;
   line-height: 40px;
   color: ${style['font-color-light']};
-  background: #cfa;
   .back{
     margin-right: 5px;
     font-size: 20px;
