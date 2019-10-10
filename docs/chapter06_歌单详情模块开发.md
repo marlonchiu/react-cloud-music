@@ -40,3 +40,106 @@
     {renderRoutes(props.route.routes)}
   </Content>
   ```
+
+## 滑动时Header联动效果
+
+* `header/index.js`
+
+  ```javascript
+  // src\baseUI\header\index.js
+  
+  import React from 'react'
+  import styled from 'styled-components'
+  import style from '../../assets/global-style'
+  import PropTypes from 'prop-types'
+  
+  const HeaderContainer = styled.div`
+    position: fixed;
+    padding: 5px 10px;
+    padding-top: 0;
+    height: 40px;
+    width: 100%;
+    z-index: 100;
+    display: flex;
+    line-height: 40px;
+    color: ${style['font-color-light']};
+    .back{
+      margin-right: 5px;
+      font-size: 20px;
+      width: 20px;
+    }
+    >h1{
+      font-size: ${style['font-size-l']};
+      font-weight: 700;
+    }
+  `
+  
+  // 处理函数组件拿不到ref的问题,所以用forwardRef
+  const Header = React.forwardRef((props, ref) => {
+    const { handleClick, title, isMarquee } = props
+  
+    return (
+      <HeaderContainer ref={ref}>
+        <i className='iconfont back' onClick={handleClick}>&#xe655;</i>
+        {
+          // eslint-disable-next-line
+          isMarquee ? <marquee><h1>{title}</h1></marquee> : <h1>{title}</h1>
+        }
+      </HeaderContainer>
+    )
+  })
+  
+  Header.defaultProps = {
+    handleClick: () => {},
+    title: '标题',
+    isMarquee: false
+  }
+  
+  Header.propTypes = {
+    handleClick: PropTypes.func,
+    title: PropTypes.string,
+    isMarquee: PropTypes.bool
+  }
+  
+  export default React.memo(Header)
+  
+  ```
+
+* `src\application\Album\index.js`
+
+  ```javascript
+  // src\application\Album\index.js
+  import React, { useState, useCallback, useRef } from 'react'
+  import { HEADER_HEIGHT } from './../../api/config'
+  import style from '../../assets/global-style'
+  
+  
+    const [showStatus, setShowStatus] = useState(true)
+    const [title, setTitle] = useState('歌单')
+    // 是否跑马灯
+    const [isMarquee, setIsMarquee] = useState(false)
+  
+    const headerEl = useRef()
+  
+    // Header组件传参
+    <Header ref={headerEl} title={title} isMarquee={isMarquee} handleClick={handleBack} />
+  
+    const handleScroll = (pos) => {
+      const minScrollY = -HEADER_HEIGHT
+      const percent = Math.abs(pos.y / minScrollY)
+      const headerDom = headerEl.current
+      // 滑过顶部的高度开始变化
+      if (pos.y < minScrollY) {
+        headerDom.style.backgroundColor = style['theme-color']
+        headerDom.style.opacity = Math.min(1, (percent - 1) / 2)
+        setTitle(currentAlbum.name)
+        setIsMarquee(true)
+      } else {
+        headerDom.style.backgroundColor = ''
+        headerDom.style.opacity = 1
+        setTitle('歌单')
+        setIsMarquee(false)
+      }
+    }
+  
+  ```

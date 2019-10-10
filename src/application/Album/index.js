@@ -196,7 +196,7 @@ function Album (props) {
                         <div className='info'>
                           <span>{item.name}</span>
                           <span>
-                            { getName(item.ar) } - { item.al.name }
+                            {getName(item.ar)} - {item.al.name}
                           </span>
                         </div>
                       </li>

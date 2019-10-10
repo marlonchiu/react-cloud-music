@@ -52,7 +52,8 @@ export const TopDesc = styled.div`
     .filter{
       position: absolute;
       z-index: 10;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       background: rgba(7, 17, 27, 0.2);
@@ -77,7 +78,7 @@ export const TopDesc = styled.div`
       font-size: ${style['font-size-s']};
       line-height: 15px;
       color: ${style['font-color-light']};
-      .play{
+      .play {
         vertical-align: top;
       }
     }
@@ -101,13 +102,13 @@ export const TopDesc = styled.div`
       line-height: 1.5;
       font-size: ${style['font-size-l']};
     }
-    .person{
+    .person {
       display: flex;
-      .avatar{
+      .avatar {
         width: 20px;
         height: 20px;
         margin-right: 5px;
-        img{
+        img {
           width: 100%;
           height: 100%;
           border-radius: 50%;
@@ -136,7 +137,7 @@ export const Menu = styled.div`
     text-align: center;
     font-size: ${style['font-size-s']};
     color: ${style['font-color-light']};
-    z-index:1000;
+    z-index: 1000;
     font-weight: 500;
     .iconfont {
       font-size: 20px;
@@ -155,7 +156,7 @@ export const SongList = styled.div`
     position: relative;
     justify-content: space-between;
     border-bottom: 1px solid ${style['border-color']};
-    .play_all{
+    .play_all {
       display: inline-block;
       line-height: 24px;
       color: ${style['font-color-desc']};
@@ -164,11 +165,11 @@ export const SongList = styled.div`
         margin-right: 10px;
         vertical-align: top;
       }
-      .sum{
+      .sum {
         font-size: ${style['font-size-s']};
         color: ${style['font-color-desc-v2']};
       }
-      >span{
+      >span {
         vertical-align: top;
       }
     }
@@ -176,7 +177,9 @@ export const SongList = styled.div`
       display: flex;
       align-items: center;
       position: absolute;
-      right: 0; top :0; bottom: 0;
+      right: 0; 
+      top :0;
+      bottom: 0;
       width: 130px;
       line-height: 34px;
       background: ${style['theme-color']};
@@ -194,7 +197,7 @@ export const SongList = styled.div`
         line-height: 34px;
       }
     }
-    .isCollected{
+    .isCollected {
       display: flex;
       background: ${style['background-color']};
       color: ${style['font-color-desc']};
