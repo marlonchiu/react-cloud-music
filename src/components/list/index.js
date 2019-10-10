@@ -2,9 +2,15 @@ import React from 'react'
 import { ListWrapper, List, ListItem } from './style'
 import LazyLoad from 'react-lazyload'
 import { getCount } from '../../api/utils'
+import { withRouter } from 'react-router-dom'
 
 function RecommendList (props) {
   const { recommendList } = props
+
+  const enterDetail = (id) => {
+    props.history.push(`/recommend/${id}`)
+  }
+
   return (
     <ListWrapper>
       <h1 className='title'>推荐歌单</h1>
@@ -12,7 +18,7 @@ function RecommendList (props) {
         {
           recommendList.map((item, index) => {
             return (
-              <ListItem key={item.id + index}>
+              <ListItem key={item.id + index} onClick={() => enterDetail(item.id)}>
                 <div className='img_wrapper'>
                   {/* 作用就是给图片上的图标和文字提供一个遮罩，因为在字体颜色是白色， */}
                   {/* 在面对白色图片背景的时候，文字会看不清或者看不到，因此提供一个阴影来衬托出文字 */}
@@ -36,4 +42,4 @@ function RecommendList (props) {
   )
 }
 
-export default React.memo(RecommendList)
+export default React.memo(withRouter(RecommendList))

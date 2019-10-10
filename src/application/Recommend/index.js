@@ -7,6 +7,7 @@ import Scroll from '../../baseUI/scroll/index'
 import { Content } from './style'
 import { forceCheck } from 'react-lazyload'
 import Loading from '../../baseUI/loading/index'
+import { renderRoutes } from 'react-router-config'
 
 function Recommend (props) {
   // mock数据
@@ -45,6 +46,8 @@ function Recommend (props) {
         </div>
       </Scroll>
       {enterLoading ? <Loading /> : null}
+      {/* 将目前所在路由的下一层子路由加以渲染 */}
+      {renderRoutes(props.route.routes)}
     </Content>
   )
 }
