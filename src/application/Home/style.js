@@ -3,7 +3,7 @@ import style from '../../assets/global-style'
 
 export const Top = styled.div`
   display: flex;
-  flexDirection: row;
+  flex-direction: row;
   justify-content: space-between;
   padding: 5px 10px;
   background: ${style['theme-color']};
@@ -46,5 +46,5 @@ export const TabItem = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-item: center;
+  align-items: center;
 `
