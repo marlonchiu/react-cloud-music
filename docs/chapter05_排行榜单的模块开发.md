@@ -278,3 +278,31 @@
   export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Rank))
   
   ```
+
+## Rank组件UI布局
+
+* 布局关注点
+
+* 在image_wrapper中，我们再次利用渐变效果实现了一层遮罩，达到衬托文字的效果。
+
+* 布局都是非常常用的flex布局，我就不在这上面浪费时间了。值得注意的是，当flex布局一行填满三个元素，但是最后一行只有两个元素的时候，会出现一些问题，你会发现最后一个元素并不是在居中的位置，而是在最右边，中间留出了空白。我当时就遇到了这个问题，最后采用伪元素的方式才得以解决:
+
+  ```javascript
+  export const List = styled.ul`
+    margin-top: 10px;
+    padding: 0 5px;
+    // 居然可以接收传递过来的参数（js语法）
+    display: ${props => props.globalRank ? 'flex' : ''};
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    background: ${style['background-color']};
+    &::after {
+      content: '';
+      display: block;
+      width: 32vw;
+    }
+  `
+  ```
+
+* 现在的接口列表数据比之前少了一条，因此不再存在这个问题，但是希望大家能了解到这个细节。
