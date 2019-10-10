@@ -164,3 +164,117 @@
 
 当然redux也并不是十全十美的，有些方面也经常被人吐槽，比如繁重的模板代码，需要react-redux引入徒增项目包大小等等。但是瑕不掩瑜，这些不妨碍我们使用redux开发出容易调试并维护的应用。
 因此我觉得redux是一个短时间不可被替代的状态管理方案。
+
+## 排行榜数据层开发
+
+* 在api/request.js中添加以下代码
+
+  ```javascript
+  // 获取排行榜数据
+  export const getRankListRequest = () => {
+    return axiosInstance.get('/toplist/detail')
+  }
+  ```
+
+* 逻辑较为简单，strore业务写在一起，redux的代码我们集中在一个文件中
+
+  ```javascript
+  // ...\src\application\Rank\store\index.js
+  
+  import { getRankListRequest } from '../../../api/request'
+  import { fromJS } from 'immutable'
+  
+  // constants
+  export const CHANGE_RANK_LIST = 'rank/CHANGE_RANK_LIST'
+  export const CHANGE_ENTER_LOADING = 'rank/ENTER_LOADING'
+  
+  // reducer
+  const defaultState = fromJS({
+    rankList: [],
+    enterLoading: true
+  })
+  
+  const reducer = (state = defaultState, action) => {
+    switch (action.type) {
+      case CHANGE_RANK_LIST:
+        return state.set('rankList', action.data)
+      case CHANGE_ENTER_LOADING:
+        return state.set('enterLoading', action.data)
+      default:
+        return state
+    }
+  }
+  
+  // actionCreators
+  export const changeRankList = (data) => ({
+    type: CHANGE_RANK_LIST,
+    data: fromJS(data)
+  })
+  
+  export const changeEnterLoading = (data) => ({
+    type: CHANGE_ENTER_LOADING,
+    data
+  })
+  
+  // 加载排行榜数据
+  export const getRankList = () => {
+    return (dispatch) => {
+      getRankListRequest().then(res => {
+        console.log(res)
+        const data = res && res.list
+        dispatch(changeRankList(data))
+        dispatch(changeEnterLoading(false))
+      }).catch(() => {
+        console.log('排行榜数据获取失败')
+      })
+    }
+  }
+  
+  export {
+    reducer
+  }
+  
+  ```
+
+* 在全局store注册
+
+* rank组件连接redux
+
+  ```javascript
+  // E:...\src\application\Rank\index.js
+  
+  import React, { useEffect } from 'react'
+  import { connect } from 'react-redux'
+  import { getRankList } from './store/index'
+  
+  function Rank (props) {
+    const { getRankListDataDispatch } = props
+  
+    useEffect(() => {
+      getRankListDataDispatch()
+      // eslint-disable-next-line
+    }, [])
+  
+    return (
+      <div>Rank</div>
+    )
+  }
+  // 映射Redux全局的state到组件的props上
+  const mapStateToProps = (state) => ({
+    rankList: state.getIn(['rank', 'rankList']),
+    enterLoading: state.getIn(['rank', 'enterLoading'])
+  })
+  
+  // 映射dispatch到props上
+  const mapDispatchToProps = (dispatch) => { 
+    return {
+      // 排行榜数据
+      getRankListDataDispatch () {
+        dispatch(getRankList())
+      }
+    }
+  }
+  
+  export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Rank))
+  
+  ```
