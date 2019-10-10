@@ -6,14 +6,18 @@ import { renderRoutes } from 'react-router-config'
 import routes from './routes/index'
 import store from './store/index'
 import { HashRouter } from 'react-router-dom'
-
+// 引入singers的hooks状态提供器
+import { CategoryData } from './application/Singers/data'
 function App () {
   return (
     <Provider store={store}>
       <HashRouter>
         <GlobalStyle />
         <IconStyle />
-        {renderRoutes(routes)}
+        {/* singers提供状态 */}
+        <CategoryData>
+          {renderRoutes(routes)}
+        </CategoryData>
       </HashRouter>
     </Provider>
   )

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import Horizen from '../../baseUI/horizen-item'
 import { categoryTypes, alphaTypes } from '../../api/config'
 import { NavContainer, ListContainer, List, ListItem } from './style'
@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 import * as actionCreators from './store/actionCreators'
 import Loading from '../../baseUI/loading/index'
 import LazyLoad, { forceCheck } from 'react-lazyload'
+import { CategoryDataContext, CHANGE_CATEGORY, CHANGE_ALPHA, CategoryData } from './data'
 // mock数据
 // const singerList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(item => {
 //   return {
@@ -17,23 +18,31 @@ import LazyLoad, { forceCheck } from 'react-lazyload'
 // })
 
 function Singers (props) {
-  const [category, setCategory] = useState('')
-  const [alpha, setAlpha] = useState('')
+  // const [category, setCategory] = useState('')
+  // const [alpha, setAlpha] = useState('')
+  // 将之前的useState代码删除
+  const { data, dispatch } = useContext(CategoryDataContext)
+  // 拿到category和alpha的值
+  const { category, alpha } = data.toJS()
 
   const { singerList, enterLoading, pullUpLoading, pullDownLoading, pageCount } = props
   const { getHotSingerListDataDispatch, getSingerListDataDispatch, pullDownRefreshDispatch, pullUpRefreshDispatch } = props
 
   useEffect(() => {
-    getHotSingerListDataDispatch()
+    // 歌手列表页的数据缓存
+    if (!singerList.size) getHotSingerListDataDispatch()
     // eslint-disable-next-line
   }, [])
 
+  // CHANGE_ALPHA和CHANGE_CATEGORY变量需要从data.js中引入
   const handleUpdateCatetory = (val) => {
-    setCategory(val)
+    // setCategory(val)
+    dispatch({ type: CHANGE_CATEGORY, data: val })
     getSingerListDataDispatch(val, alpha)
   }
   const handleUpdateAlpha = (val) => {
-    setAlpha(val)
+    // setAlpha(val)
+    dispatch({ type: CHANGE_ALPHA, data: val })
     getSingerListDataDispatch(category, val)
   }
   const handlePullUp = () => {
@@ -70,32 +79,34 @@ function Singers (props) {
 
   return (
     <div>
-      <NavContainer>
-        <Horizen
-          list={categoryTypes}
-          title={'分类（默认热门）:'}
-          oldVal={category}
-          handleClick={(val) => handleUpdateCatetory(val)}
-        />
-        <Horizen
-          list={alphaTypes}
-          title='首字母:'
-          oldVal={alpha}
-          handleClick={(val) => handleUpdateAlpha(val)}
-        />
-      </NavContainer>
-      <ListContainer>
-        <Scroll
-          onScroll={forceCheck}
-          pullUp={handlePullUp}
-          pullDown={handlePullDown}
-          pullUpLoading={pullUpLoading}
-          pullDownLoading={pullDownLoading}
-        >
-          {renderSingerList()}
-        </Scroll>
-        <Loading show={enterLoading} />
-      </ListContainer>
+      <CategoryData>
+        <NavContainer>
+          <Horizen
+            list={categoryTypes}
+            title={'分类（默认热门）:'}
+            oldVal={category}
+            handleClick={(val) => handleUpdateCatetory(val)}
+          />
+          <Horizen
+            list={alphaTypes}
+            title='首字母:'
+            oldVal={alpha}
+            handleClick={(val) => handleUpdateAlpha(val)}
+          />
+        </NavContainer>
+        <ListContainer>
+          <Scroll
+            onScroll={forceCheck}
+            pullUp={handlePullUp}
+            pullDown={handlePullDown}
+            pullUpLoading={pullUpLoading}
+            pullDownLoading={pullDownLoading}
+          >
+            {renderSingerList()}
+          </Scroll>
+          <Loading show={enterLoading} />
+        </ListContainer>
+      </CategoryData>
     </div>
   )
 }
