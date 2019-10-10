@@ -1,5 +1,3 @@
-import { RankTypes } from './config'
-
 // 点播量数据处理
 export const getCount = (count) => {
   if (count < 0) return
@@ -33,14 +31,6 @@ export const filterIndex = rankList => {
       return i + 1
     }
   }
-}
-
-// 找出排行榜的序号
-export const filterIdx = name => {
-  for (var key in RankTypes) {
-    if (RankTypes[key] === name) return key
-  }
-  return null
 }
 
 // 处理歌手列表拼接歌手名字

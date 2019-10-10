@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 import { Container, List, ListItem, SongList } from './style'
 import { getRankList } from './store/index'
-import { filterIndex, filterIdx } from '../../api/utils'
+import { filterIndex } from '../../api/utils'
 import Scroll from '../../baseUI/scroll/index'
 import Loading from '../../baseUI/loading'
 import { EnterLoading } from './../Singers/style'
@@ -26,14 +26,10 @@ function Rank (props) {
     // eslint-disable-next-line
   }, [])
 
-  const enterDetail = (name) => {
-    const idx = filterIdx(name)
-    if (idx === null) {
-      alert('暂无相关数据')
-      return false
-    }
-
+  const enterDetail = (detail) => {
+    // 之前排行歌单不存在的问题已经收到小伙伴的pr，完美解决，因此直接拿到id跳转即可
     // 后续跳转操作
+    props.history.push(`/rank/${detail.id}`)
   }
 
   const renderSongList = (list) => {
@@ -55,7 +51,7 @@ function Rank (props) {
         {
           list.map((item) => {
             return (
-              <ListItem key={item.coverImgId} tracks={item.tracks} onClick={() => enterDetail(item.name)}>
+              <ListItem key={item.coverImgId} tracks={item.tracks} onClick={() => enterDetail(item)}>
                 <div className='img_wrapper'>
                   <img src={item.coverImgUrl} alt='' />
                   <div className='decorate' />

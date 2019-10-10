@@ -143,3 +143,23 @@
     }
   
   ```
+
+## 代码封装及优化
+
+### `useCallback`优化function props
+
+将传给子组件的函数用`useCallback`包裹, 这也是`useCallback`的常用场景。
+
+```javascript
+const handleBack = useCallback(() => {
+  setShowStatus(false)
+}, []);
+
+const handleScroll = useCallback((pos) => {
+  //xxx
+}, [currentAlbum])
+```
+
+以此为例，如果不用useCallback包裹，父组件每次执行时会生成不一样的handleBack和handleScroll函数引用，那么子组件每一次memo的结果都会不一样，导致不必要的重新渲染，也就浪费了memo的价值。
+
+因此`useCallback`能够帮我们在依赖不变的情况保持一样的函数引用，最大程度地节约浏览器渲染性能。
