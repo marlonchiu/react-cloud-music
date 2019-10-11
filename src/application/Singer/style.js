@@ -53,7 +53,7 @@ export const ImgWrapper = styled.div`
 // 以left、right各为0，margin设为auto的方式实现水平居中
 export const CollectButton = styled.div`
   position: absolute;
-  left: 0; 
+  left: 0;
   right: 0;
   margin: auto;
   box-sizing: border-box;

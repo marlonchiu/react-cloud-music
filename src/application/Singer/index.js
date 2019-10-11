@@ -40,6 +40,8 @@ function Singer (props) {
 
   useEffect(() => {
     const h = imageWrapper.current.offsetHeight
+    // console.log(h)
+    // 图片包裹器的定位开始top值
     songScrollWrapper.current.style.top = `${h - OFFSET}px`
     initialHeight.current = h
     // 把遮罩先放在下面，以裹住歌曲列表
@@ -63,6 +65,7 @@ function Singer (props) {
     const minScrollY = -(height - OFFSET) + HEADER_HEIGHT
     // 指的是滑动距离占图片高度的百分比
     const percent = Math.abs(newY / height)
+    console.log(height, newY, percent)
     // 在歌手页的布局中，歌单列表其实是没有自己的背景的，
     // layerDOM其实是起一个遮罩的作用，给歌单内容提供白色背景
     // 因此在处理的过程中，随着内容的滚动，遮罩也跟着移动

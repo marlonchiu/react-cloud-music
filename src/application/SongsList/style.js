@@ -34,7 +34,7 @@ export const SongList = styled.div`
       display: flex;
       align-items: center;
       position: absolute;
-      right: 0; 
+      right: 0;
       top :0;
       bottom: 0;
       width: 130px;
