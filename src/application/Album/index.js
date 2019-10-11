@@ -139,6 +139,7 @@ function Album (props) {
 
   // 在退出动画执行结束时跳转路由
   // onExited={props.history.goBack}
+  // onExited={() => props.history.goBack()}
   return (
     <CSSTransition
       in={showStatus}
