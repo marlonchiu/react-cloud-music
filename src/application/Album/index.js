@@ -2,13 +2,14 @@ import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import Header from '../../baseUI/header/index'
 import Scroll from '../../baseUI/scroll/index'
-import { Container, TopDesc, Menu, SongList, SongItem } from './style'
-import { getCount, getName, isEmptyObject } from '../../api/utils'
+import { Container, TopDesc, Menu } from './style'
+import { getCount, isEmptyObject } from '../../api/utils'
 import { HEADER_HEIGHT } from './../../api/config'
 import style from '../../assets/global-style'
 import { connect } from 'react-redux'
 import * as actionCreators from './store/actionCreators'
 import Loading from '../../baseUI/loading/index'
+import SongsList from '../SongsList'
 
 // mock数据已删除
 
@@ -65,7 +66,7 @@ function Album (props) {
           <img src={currentAlbum.coverImgUrl} alt='' />
           <div className='play_count'>
             <i className='iconfont play'>&#xe885;</i>
-            <span className='count'>{Math.floor(currentAlbum.subscribedCount / 1000) / 10}万</span>
+            <span className='count'>{getCount(currentAlbum.subscribedCount)}</span>
           </div>
         </div>
         <div className='desc_wrapper'>
@@ -103,40 +104,6 @@ function Album (props) {
     )
   }
 
-  const renderSongList = () => {
-    return (
-      <SongList>
-        <div className='first_line'>
-          <div className='play_all'>
-            <i className='iconfont'>&#xe6e3;</i>
-            <span>播放全部 <span className='sum'>(共{currentAlbum.tracks.length}首)</span></span>
-          </div>
-          <div className='add_list'>
-            <i className='iconfont'>&#xe62d;</i>
-            <span>收藏({getCount(currentAlbum.subscribedCount)})</span>
-          </div>
-        </div>
-        <SongItem>
-          {
-            currentAlbum.tracks.map((item, index) => {
-              return (
-                <li key={index}>
-                  <span className='index'>{index + 1}</span>
-                  <div className='info'>
-                    <span>{item.name}</span>
-                    <span>
-                      {getName(item.ar)} - {item.al.name}
-                    </span>
-                  </div>
-                </li>
-              )
-            })
-          }
-        </SongItem>
-      </SongList>
-    )
-  }
-
   // 在退出动画执行结束时跳转路由
   // onExited={props.history.goBack}
   // onExited={() => props.history.goBack()}
@@ -147,19 +114,24 @@ function Album (props) {
       classNames='fly'
       appear={true}
       unmountOnExit
-      onExited={props.history.goBack}
+      onExited={() => props.history.goBack()}
     >
       <Container>
         <Header ref={headerEl} title={title} isMarquee={isMarquee} handleClick={handleBack} />
         {/* 布局代码 */}
         {
-
           !isEmptyObject(currentAlbum) ? (
             <Scroll bounceTop={false} onScroll={handleScroll}>
               <div>
                 {renderTopDesc()}
                 {renderMenu()}
-                {renderSongList()}
+                {/* showCollect={true} 标准为如下 */}
+                <SongsList
+                  songs={currentAlbum.tracks}
+                  showCollect
+                  collectCount={currentAlbum.subscribedCount}
+                  showBackground={true}
+                />
               </div>
             </Scroll>
           ) : null
