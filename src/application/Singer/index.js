@@ -5,114 +5,27 @@ import Header from '../../baseUI/header/index'
 import Scroll from '../../baseUI/scroll/index'
 import SongsList from '../SongsList'
 import { HEADER_HEIGHT } from './../../api/config'
-
-const artist = {
-  picUrl: 'https://p2.music.126.net/W__FCWFiyq0JdPtuLJoZVQ==/109951163765026271.jpg',
-  name: '薛之谦',
-  hotSongs: [
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    },
-    {
-      name: '我好像在哪见过你',
-      ar: [{ name: '薛之谦' }],
-      al: {
-        name: '薛之谦专辑'
-      }
-    }
-  ]
-}
+import { connect } from 'react-redux'
+import * as actionCreators from './store/actionCreators'
+import Loading from '../../baseUI/loading/index'
 
 function Singer (props) {
   const [showStatus, setShowStatus] = useState(true)
+  const {
+    artist: immutableArtist,
+    songsOfArtist: immutableSongs,
+    enterLoading
+  } = props
+  const { getSingerDataDispatch } = props
+
+  const artist = immutableArtist.toJS()
+  const songsOfArtist = immutableSongs.toJS()
+
+  useEffect(() => {
+    const id = props.match.params.id
+    getSingerDataDispatch(id)
+    // eslint-disable-next-line
+  }, [])
 
   const collectButton = useRef()
   const imageWrapper = useRef()
@@ -205,14 +118,33 @@ function Singer (props) {
         <SongListWrapper ref={songScrollWrapper}>
           <Scroll ref={songScroll} onScroll={handleScroll}>
             <SongsList
-              songs={artist.hotSongs}
+              songs={songsOfArtist}
               showCollect={false}
             />
           </Scroll>
         </SongListWrapper>
+        {enterLoading ? <Loading /> : null}
       </Container>
     </CSSTransition>
   )
 }
 
-export default Singer
+// 映射Redux全局的state到组件的props上
+const mapStateToProps = (state) => ({
+  artist: state.getIn(['singerInfo', 'artist']),
+  songsOfArtist: state.getIn(['singerInfo', 'songsOfArtist']),
+  enterLoading: state.getIn(['singerInfo', 'enterLoading'])
+})
+
+// 映射dispatch到props上
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getSingerDataDispatch (id) {
+      dispatch(actionCreators.changeEnterLoading(true))
+      dispatch(actionCreators.getSingerInfo(id))
+    }
+  }
+}
+
+// 将ui组件包装成容器组件
+export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Singer))
