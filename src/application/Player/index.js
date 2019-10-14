@@ -1,13 +1,23 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import * as actionCreators from './store/actionCreators'
+import MiniPlayer from './miniPlayer'
+import NormalPlayer from './normalPlayer'
+
+// mock 数据
+const currentSong = {
+  al: { picUrl: 'https://p1.music.126.net/JL_id1CFwNJpzgrXwemh4Q==/109951164172892390.jpg' },
+  name: '木偶人',
+  ar: [{ name: '薛之谦' }]
+}
 
 function Player (props) {
   const {
-    currentSong, fullScreen, playingState, sequencePlayList,
+    fullScreen, playingState, sequencePlayList,
     playList, playMode, currentIndex, showPlayList } = props
   
-  const { changeCurrentSongDispatch,
+  const {
+    changeCurrentSongDispatch,
     toggleFullScreenDispatch,
     togglePlayingStateDispatch,
     changeSequecePlayList,
@@ -17,7 +27,19 @@ function Player (props) {
     toggleShowPlayListDispatch
     } = props
   return (
-    <div>Player</div>
+    <div>
+      <MiniPlayer
+        song={currentSong}
+        fullScreen={fullScreen}
+        playingState={playingState}
+        toggleFullScreen={toggleFullScreenDispatch}
+      />
+      <NormalPlayer
+        song={currentSong}
+        fullScreen={fullScreen}
+        toggleFullScreen={toggleFullScreenDispatch}
+      />
+    </div>
   )
 }
 
