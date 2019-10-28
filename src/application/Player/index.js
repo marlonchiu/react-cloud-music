@@ -26,7 +26,8 @@ function Player (props) {
     currentSong: immutableCurrentSong,
     playList: immutablePlayList,
     sequencePlayList: immutableSequencePlayList, // 顺序列表
-    currentIndex
+    currentIndex,
+    playMode
   } = props
 
   const {
