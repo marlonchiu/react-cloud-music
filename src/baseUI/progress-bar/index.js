@@ -62,11 +62,12 @@ function ProgressBar (props) {
 
   const progressTouchStart = (e) => {
     const startTouch = {}
-    startTouch.initiated = true // initial为true表示滑动动作开始了
+    startTouch.initiated = true // initial 为true表示滑动动作开始了
     startTouch.startX = e.touches[0].pageX // 滑动开始时横向坐标
     startTouch.left = progress.current.clientWidth // 当前progress长度
     setTouch(startTouch)
   }
+
   const progressTouchMove = (e) => {
     if (!touch.initiated) return
     // 滑动距离
@@ -75,18 +76,31 @@ function ProgressBar (props) {
     const offsetWidth = Math.min(Math.max(0, touch.left + deltaX), barWidth)
     _offset(offsetWidth)
   }
+
   const progressTouchEnd = (e) => {
     const endTouch = JSON.parse(JSON.stringify(touch))
     endTouch.initiated = false
     setTouch(endTouch)
     _changePercent()
   }
+
   const progressClick = (e) => {
     const rect = progressBar.current.getBoundingClientRect()
     const offsetWidth = e.pageX - rect.left
     _offset(offsetWidth)
     _changePercent()
   }
+
+  // 监听 percent
+  useEffect(() => {
+    if (percent >= 0 && percent <= 1 && !touch.initiated) {
+      const barWidth = progressBar.current.clientWidth - progressBtnWidth
+      const offsetWidth = percent * barWidth
+      progress.current.style.width = `${offsetWidth} px`
+      progressBtn.current.style[transform] = `translate3d (${offsetWidth} px, 0, 0)`
+    }
+    // eslint-disable-next-line
+  }, [percent])
 
   return (
     <ProgressBarWrapper>

@@ -16,7 +16,7 @@ export const changePlayingState = (data) => ({
   data: data
 })
 
-export const changeSequecePlayList = (data) => ({
+export const changeSequencePlayList = (data) => ({
   type: actionTypes.SET_SEQUENCE_PLAYLIST,
   data: fromJS(data)
 })

@@ -19,14 +19,15 @@ function Player (props) {
   const [duration, setDuration] = useState(0)
   // 歌曲播放进度
   let percent = isNaN(currentTime / duration) ? 0 : currentTime / duration
+
   const audioRef = useRef()
   const {
     fullScreen,
     playingState,
+    currentIndex,
     currentSong: immutableCurrentSong,
     playList: immutablePlayList,
     sequencePlayList: immutableSequencePlayList, // 顺序列表
-    currentIndex,
     playMode
   } = props
 
@@ -34,7 +35,7 @@ function Player (props) {
     changeCurrentSongDispatch,
     toggleFullScreenDispatch,
     togglePlayingStateDispatch,
-    changeSequecePlayListDispatch,
+    changeSequencePlayListDispatch,
     changePlayListDispatch,
     changePlayModeDispatch,
     changeCurrentIndexDispatch,
@@ -44,13 +45,16 @@ function Player (props) {
   const playList = immutablePlayList.toJS()
   const sequencePlayList = immutableSequencePlayList.toJS()
   const currentSong = immutableCurrentSong.toJS()
+  console.log(playList)
+  console.log(currentSong)
 
   useEffect(() => {
-    if (!currentSong) return
+    if (!playList.length || !currentSong) return false
     changeCurrentIndexDispatch(0) // currentIndex默认为-1，临时改成0
     const current = playList[0]
     changeCurrentSongDispatch(current) // 赋值currentSong
     audioRef.current.src = getSongUrl(current.id)
+    console.log(getSongUrl(current.id))
     setTimeout(() => {
       audioRef.current.play()
     })
@@ -66,6 +70,19 @@ function Player (props) {
   const clickPlaying = (e, state) => {
     e.stopPropagation()
     togglePlayingStateDispatch(state)
+  }
+
+  const updateTime = e => {
+    setCurrentTime(e.target.currentTime)
+  }
+
+  const onProgressChange = (curPercent) => {
+    const newTime = curPercent * duration
+    setCurrentTime(newTime)
+    audioRef.current.currentTime = newTime
+    if (!playingState) {
+      togglePlayingStateDispatch(true)
+    }
   }
 
   return (
@@ -87,12 +104,15 @@ function Player (props) {
             song={currentSong}
             fullScreen={fullScreen}
             playingState={playingState}
+            duration={duration}
+            currentTime={currentTime}
+            percent={percent}
             toggleFullScreen={toggleFullScreenDispatch}
             clickPlaying={clickPlaying}
-            percent={percent}
+            onProgressChange={onProgressChange}
           />
       }
-      <audio ref={audioRef} />
+      <audio ref={audioRef} onTimeUpdate={updateTime} />
     </div>
   )
 }
@@ -121,8 +141,8 @@ const mapDispatchToProps = (dispatch) => {
     togglePlayingStateDispatch (data) {
       dispatch(actionCreators.changePlayingState(data))
     },
-    changeSequecePlayListDispatch (data) {
-      dispatch(actionCreators.changeSequecePlayList(data))
+    changeSequencePlayListDispatch (data) {
+      dispatch(actionCreators.changeSequencePlayList(data))
     },
     changePlayListDispatch (data) {
       dispatch(actionCreators.changePlayList(data))

@@ -24,7 +24,7 @@
     "swiper": "^5.0.4"
   },
   "scripts": {
-    "start:server": "cd NeteaseCloudMusicApi && set PORT=4000 && node app.js",
+    "server": "cd NeteaseCloudMusicApi && set PORT=4000 && node app.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
