@@ -129,7 +129,7 @@ const mapStateToProps = state => ({
   showPlayList: state.getIn(['player', 'showPlayList'])
 })
 
-// 映射dispatch到props上
+// 映射 dispatch 到 props 上
 const mapDispatchToProps = (dispatch) => {
   return {
     changeCurrentSongDispatch (data) {

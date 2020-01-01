@@ -1,13 +1,23 @@
 import React from 'react'
 import { SongList, SongItem } from './style'
 import { getCount, getName } from '../../api/utils'
+import * as actionCreators from './../../application/Player/store/actionCreators'
+import { connect } from 'react-redux'
 
 const SongsList = React.forwardRef((props, refs) => {
   const { collectCount, showCollect, songs } = props
   const totalCount = songs.length
 
+  // const { musicAnimation } = props
+
+  const { changePlayListDispatch, changeSequencePlayListDispatch, changeCurrentIndexDispatch } = props
+
   const selectItem = (e, index) => {
     console.log(index)
+    changePlayListDispatch(songs)
+    changeSequencePlayListDispatch(songs)
+    changeCurrentIndexDispatch(index)
+    // musicAnimation(e.nativeEvent.clientX, e.nativeEvent.clientY)
   }
 
   const songList = (list) => {
@@ -57,4 +67,19 @@ const SongsList = React.forwardRef((props, refs) => {
   )
 })
 
-export default React.memo(SongsList)
+// 映射 dispatch 到 props 上
+const mapDispatchToProps = (dispatch) => {
+  return {
+    changePlayListDispatch (data) {
+      dispatch(actionCreators.changePlayList(data))
+    },
+    changeSequencePlayListDispatch (data) {
+      dispatch(actionCreators.changeSequencePlayList(data))
+    },
+    changeCurrentIndexDispatch (data) {
+      dispatch(actionCreators.changeCurrentIndex(data))
+    }
+  }
+}
+
+export default connect(null, mapDispatchToProps)(React.memo(SongsList))
