@@ -8,12 +8,12 @@ export const changeCurrentSong = (data) => ({
 
 export const changeFullScreen = (data) => ({
   type: actionTypes.SET_FULL_SCREEN,
-  data: data
+  data
 })
 
 export const changePlayingState = (data) => ({
   type: actionTypes.SET_PLAYING_STATE,
-  data: data
+  data
 })
 
 export const changeSequencePlayList = (data) => ({
@@ -28,15 +28,15 @@ export const changePlayList = (data) => ({
 
 export const changePlayMode = (data) => ({
   type: actionTypes.SET_PLAY_MODE,
-  data: fromJS(data)
+  data
 })
 
 export const changeCurrentIndex = (data) => ({
   type: actionTypes.SET_CURRENT_INDEX,
-  data: data
+  data
 })
 
 export const changeShowPlayList = (data) => ({
   type: actionTypes.SET_SHOW_PLAYLIST,
-  data: data
+  data
 })

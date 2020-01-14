@@ -1,7 +1,7 @@
 // actionCreators.js // 放不同action的地方
 import * as actionTypes from './constants'
 import { fromJS } from 'immutable'
-import { getBannnerRequest, getRecommendListRequest } from '../../../api/request'
+import { getBannerRequest, getRecommendListRequest } from '../../../api/request'
 
 export const changeBannerList = (data) => ({
   type: actionTypes.CHANGE_BANNER,
@@ -20,7 +20,7 @@ export const changeEnterLoading = (data) => ({
 
 export const getBannerList = () => {
   return (dispatch) => {
-    getBannnerRequest().then(data => {
+    getBannerRequest().then(data => {
       console.log(data)
       dispatch(changeBannerList(data.banners))
     }).catch(() => {

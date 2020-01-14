@@ -1,7 +1,7 @@
 import { axiosInstance } from './config'
 
 // 获取轮播图数据
-export const getBannnerRequest = () => {
+export const getBannerRequest = () => {
   return axiosInstance.get('/banner')
 }
 
