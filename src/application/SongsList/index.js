@@ -10,10 +10,15 @@ const SongsList = React.forwardRef((props, refs) => {
 
   // const { musicAnimation } = props
 
-  const { changePlayListDispatch, changeSequencePlayListDispatch, changeCurrentIndexDispatch } = props
+  const {
+    changePlayListDispatch,
+    changeSequencePlayListDispatch,
+    changeCurrentIndexDispatch
+  } = props
 
   const selectItem = (e, index) => {
     console.log(index)
+    // 显示播放器
     changePlayListDispatch(songs)
     changeSequencePlayListDispatch(songs)
     changeCurrentIndexDispatch(index)
