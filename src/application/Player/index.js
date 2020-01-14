@@ -28,14 +28,14 @@ function Player (props) {
     currentSong: immutableCurrentSong,
     playList: immutablePlayList,
     sequencePlayList: immutableSequencePlayList, // 顺序列表
-    playMode
+    playMode // 播放模式
   } = props
 
   const {
     changeCurrentSongDispatch,
     toggleFullScreenDispatch,
     togglePlayingStateDispatch,
-    changeSequencePlayListDispatch,
+    // changeSequencePlayListDispatch,
     changePlayListDispatch,
     changePlayModeDispatch,
     changeCurrentIndexDispatch,
@@ -45,23 +45,20 @@ function Player (props) {
   const playList = immutablePlayList.toJS()
   const sequencePlayList = immutableSequencePlayList.toJS()
   const currentSong = immutableCurrentSong.toJS()
-  console.log(playList)
-  console.log(currentSong)
 
   useEffect(() => {
-    if (!playList.length || !currentSong) return false
-    changeCurrentIndexDispatch(0) // currentIndex默认为-1，临时改成0
-    const current = playList[0]
+    if (!playList.length || currentIndex === -1) return
+    let current = playList[currentIndex]
     changeCurrentSongDispatch(current) // 赋值currentSong
+    getSongUrl(current.id)
     audioRef.current.src = getSongUrl(current.id)
-    console.log(getSongUrl(current.id))
     setTimeout(() => {
       audioRef.current.play()
     })
     togglePlayingStateDispatch(true) // 播放状态
     setCurrentTime(0) // 从头开始播放
     setDuration((current.dt / 1000) | 0) // 时长
-  }, [])
+  }, [currentIndex])
 
   useEffect(() => {
     playingState ? audioRef.current.play() : audioRef.current.pause()
@@ -132,26 +129,26 @@ const mapStateToProps = state => ({
 // 映射 dispatch 到 props 上
 const mapDispatchToProps = (dispatch) => {
   return {
-    changeCurrentSongDispatch (data) {
-      dispatch(actionCreators.changeCurrentSong(data))
+    togglePlayingStateDispatch (data) {
+      dispatch(actionCreators.changePlayingState(data))
     },
     toggleFullScreenDispatch (data) {
       dispatch(actionCreators.changeFullScreen(data))
     },
-    togglePlayingStateDispatch (data) {
-      dispatch(actionCreators.changePlayingState(data))
+    changeCurrentSongDispatch (data) {
+      dispatch(actionCreators.changeCurrentSong(data))
     },
-    changeSequencePlayListDispatch (data) {
-      dispatch(actionCreators.changeSequencePlayList(data))
-    },
+    // changeSequencePlayListDispatch (data) {
+    //   dispatch(actionCreators.changeSequencePlayList(data))
+    // },
     changePlayListDispatch (data) {
       dispatch(actionCreators.changePlayList(data))
     },
     changePlayModeDispatch (data) {
       dispatch(actionCreators.changePlayMode(data))
     },
-    changeCurrentIndexDispatch (data) {
-      dispatch(actionCreators.changeCurrentIndex(data))
+    changeCurrentIndexDispatch (index) {
+      dispatch(actionCreators.changeCurrentIndex(index))
     },
     toggleShowPlayListDispatch (data) {
       dispatch(actionCreators.changeShowPlayList(data))
@@ -159,4 +156,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 // 映射dispatch到props上
-export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Player))
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(React.memo(Player))
