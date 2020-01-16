@@ -9,6 +9,7 @@ import style from '../../assets/global-style'
 import { connect } from 'react-redux'
 import * as actionCreators from './store/actionCreators'
 import Loading from '../../baseUI/loading/index'
+import MusicNote from '../../baseUI/music-note/index'
 import SongsList from '../SongsList'
 
 // mock数据已删除
@@ -31,6 +32,10 @@ function Album (props) {
 
   const currentAlbum = currentAlbumImmutable.toJS()
 
+  const musicNoteRef = useRef()
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation({ x, y })
+  }
   // useCallback优化function props
   // 将传给子组件的函数用useCallback包裹
   const handleBack = useCallback(() => {
@@ -131,12 +136,14 @@ function Album (props) {
                   showCollect
                   collectCount={currentAlbum.subscribedCount}
                   showBackground={true}
+                  musicAnimation={musicAnimation}
                 />
               </div>
             </Scroll>
           ) : null
         }
         {enterLoading ? <Loading /> : null}
+        <MusicNote ref={musicNoteRef} />
       </Container>
     </CSSTransition>
   )

@@ -8,6 +8,7 @@ import { HEADER_HEIGHT } from './../../api/config'
 import { connect } from 'react-redux'
 import * as actionCreators from './store/actionCreators'
 import Loading from '../../baseUI/loading/index'
+import MusicNote from '../../baseUI/music-note/index'
 
 function Singer (props) {
   const [showStatus, setShowStatus] = useState(true)
@@ -33,6 +34,7 @@ function Singer (props) {
   const songScroll = useRef()
   const header = useRef()
   const layer = useRef()
+  const musicNoteRef = useRef()
   // 图片初始高度
   const initialHeight = useRef(0)
   // 往上偏移的尺寸，露出圆角
@@ -53,6 +55,10 @@ function Singer (props) {
   const setShowStatusFalse = useCallback(() => {
     setShowStatus(false)
   }, [])
+
+  const musicAnimation = (x, y) => {
+    musicNoteRef.current.startAnimation({ x, y })
+  }
 
   // handleScroll作为一个传给子组件的方法，我们需要用useCallback进行包裹，防止不必要的重渲染
   const handleScroll = useCallback((pos) => {
@@ -123,10 +129,12 @@ function Singer (props) {
             <SongsList
               songs={songsOfArtist}
               showCollect={false}
+              musicAnimation={musicAnimation}
             />
           </Scroll>
         </SongListWrapper>
         {enterLoading ? <Loading /> : null}
+        <MusicNote ref={musicNoteRef}>{' '}</MusicNote>
       </Container>
     </CSSTransition>
   )
