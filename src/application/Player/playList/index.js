@@ -20,7 +20,8 @@ function PlayList (props) {
     toggleShowPlayListDispatch,
     changeCurrentIndexDispatch,
     changePlayListDispatch, // 改变播放列表
-    changePlayModeDispatch
+    changePlayModeDispatch,
+    deleteSongDispatch
   } = props
 
   const playList = immutablePlayList.toJS()
@@ -104,6 +105,12 @@ function PlayList (props) {
     changeCurrentIndexDispatch(index)
   }
 
+  // 删除歌曲
+  const handleDeleteSong = (e, song) => {
+    e.stopPropagation()
+    deleteSongDispatch(song)
+  }
+
   return (
     <CSSTransition
       in={showPlayList}
@@ -138,7 +145,7 @@ function PlayList (props) {
                         <span className='like'>
                           <i className='iconfont'>&#xe601;</i>
                         </span>
-                        <span className='delete'>
+                        <span className='delete' onClick={(e) => handleDeleteSong(e, item)}>
                           <i className='iconfont'>&#xe63d;</i>
                         </span>
                       </li>
@@ -182,6 +189,9 @@ const mapDispatchToProps = (dispatch) => {
     // 是否显示播放列表
     toggleShowPlayListDispatch (data) {
       dispatch(actionCreators.changeShowPlayList(data))
+    },
+    deleteSongDispatch (data) {
+      dispatch(actionCreators.deleteSong(data))
     }
   }
 }
