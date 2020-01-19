@@ -30,6 +30,16 @@ function PlayList (props) {
   const sequencePlayList = immutableSequencePlayList.toJS()
   const currentSong = immutableCurrentSong.toJS()
 
+  // 是否允许滑动事件生效
+  const [canTouch, setCanTouch] = useState(true)
+  // touchStart后记录y值
+  const [startY, setStartY] = useState(0)
+  // touchStart事件是否已经被触发
+  const [initialed, setInitialed] = useState(0)
+  // 用户下滑的距离
+  const [distance, setDistance] = useState(0)
+
+  const listContentRef = useRef()
   const confirmRef = useRef()
   const playListRef = useRef()
   const listWrapperRef = useRef()
@@ -98,7 +108,7 @@ function PlayList (props) {
   }
 
   const changeMode = (e) => {
-    let newMode = (playMode + 1) % 3
+    const newMode = (playMode + 1) % 3
     // 具体逻辑比较复杂 后面来实现
     if (newMode === 0) {
       // 顺序模式
@@ -138,6 +148,39 @@ function PlayList (props) {
     clearDispatch()
   }
 
+  // 下滑关闭及反弹效果
+  const handleTouchStart = (e) => {
+    if (!canTouch || initialed) return
+    listWrapperRef.current.style[transform] = ''
+    setStartY(e.nativeEvent.touches[0].pageY) // 记录 y 值
+    setInitialed(true)
+  }
+  const handleTouchMove = (e) => {
+    if (!canTouch || !initialed) return
+    let distance = e.nativeEvent.touches[0].pageY - startY
+    if (distance < 0) return
+    setDistance(distance) // 记录下滑距离
+    listWrapperRef.current.style[transform] = `translate3d(0, ${distance}px, 0)`
+  }
+  const handleTouchEnd = (e) => {
+    setInitialed(false)
+    // 这里设置阈值为 150px
+    if (distance >= 150) {
+      // 大于 150px 则关闭 PlayList
+      toggleShowPlayListDispatch(false)
+    } else {
+      // 否则反弹回去
+      listWrapperRef.current.style.transition = 'all 0.3s'
+      listWrapperRef.current.style[transform] = 'translate3d(0px, 0px, 0px)'
+    }
+  }
+  const handleScroll = (pos) => {
+    // 只有当内容偏移量为 0 的时候才能下滑关闭 PlayList。
+    // 否则一边内容在移动，一边列表在移动，出现 bug
+    let state = pos.y === 0
+    setCanTouch(state)
+  }
+
   return (
     <CSSTransition
       in={showPlayList}
@@ -153,7 +196,14 @@ function PlayList (props) {
         style={isShow === true ? { display: 'block' } : { display: 'none' }}
         onClick={() => toggleShowPlayListDispatch(false)}
       >
-        <div className='list_wrapper' ref={listWrapperRef} onClick={e => e.stopPropagation()}>
+        <div
+          className='list_wrapper'
+          ref={listWrapperRef}
+          onClick={e => e.stopPropagation()}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <ListHeader>
             <h1 className='title'>
               {getPlayMode()}
@@ -161,7 +211,11 @@ function PlayList (props) {
             </h1>
           </ListHeader>
           <ScrollWrapper>
-            <Scroll>
+            <Scroll
+              ref={listContentRef}
+              onScroll={pos => handleScroll(pos)}
+              bounceTop={false}
+            >
               <ListContent>
                 {
                   playList.map((item, index) => {

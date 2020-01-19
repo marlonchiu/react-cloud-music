@@ -26,7 +26,7 @@ function Player (props) {
   // 记录当前的歌曲，以便于下次重渲染时比对是否是一首歌
   const [preSong, setPreSong] = useState({})
   const [modeText, setModeText] = useState('')
-  // const [songReady, setSongReady] = useState(true)
+  const [songReady, setSongReady] = useState(true)
 
   const audioRef = useRef()
   const toastRef = useRef()
@@ -61,7 +61,8 @@ function Player (props) {
       !playList.length ||
       currentIndex === -1 ||
       !playList[currentIndex] ||
-      playList[currentIndex].id === preSong.id
+      playList[currentIndex].id === preSong.id ||
+      !songReady
     ) return
     let current = playList[currentIndex]
     setPreSong(current)
@@ -72,11 +73,10 @@ function Player (props) {
     setTimeout(() => {
       // 注意，play 方法返回的是一个 promise 对象
       console.log(audioRef.current.play()) // Promise{<pending>}
-      audioRef.current.play()
-      //   .then(() => {
-      //   console.log(123)
-      //   setSongReady(true)
-      // })
+      audioRef.current.play().then(() => {
+        console.log(123)
+        setSongReady(true)
+      })
     })
     togglePlayingStateDispatch(true) // 播放状态
     setCurrentTime(0) // 从头开始播放
