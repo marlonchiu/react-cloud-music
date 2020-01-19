@@ -100,6 +100,22 @@ function PlayList (props) {
   const changeMode = (e) => {
     let newMode = (playMode + 1) % 3
     // 具体逻辑比较复杂 后面来实现
+    if (newMode === 0) {
+      // 顺序模式
+      changePlayListDispatch(sequencePlayList)
+      const index = findIndex(currentSong, sequencePlayList)
+      changeCurrentIndexDispatch(index)
+    } else if (newMode === 1) {
+      // 单曲循环
+      changePlayListDispatch(sequencePlayList)
+    } else if (newMode === 2) {
+      // 随机播放
+      const newList = shuffle(sequencePlayList)
+      const index = findIndex(currentSong, newList)
+      changePlayListDispatch(newList)
+      changeCurrentIndexDispatch(index)
+    }
+    changePlayModeDispatch(newMode)
   }
 
   // 点击切歌实现
