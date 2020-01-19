@@ -64,11 +64,18 @@ function Player (props) {
     ) return
     let current = playList[currentIndex]
     setPreSong(current)
+    // 把标志位置为 false, 表示现在新的资源没有缓冲完成，不能切歌
     // setSongReady(false)
     changeCurrentSongDispatch(current) // 赋值currentSong
     audioRef.current.src = getSongUrl(current.id)
     setTimeout(() => {
+      // 注意，play 方法返回的是一个 promise 对象
+      console.log(audioRef.current.play()) // Promise{<pending>}
       audioRef.current.play()
+      //   .then(() => {
+      //   console.log(123)
+      //   setSongReady(true)
+      // })
     })
     togglePlayingStateDispatch(true) // 播放状态
     setCurrentTime(0) // 从头开始播放
@@ -168,8 +175,8 @@ function Player (props) {
   return (
     <div>
       {
-        isEmptyObject(currentSong) ? null
-          : <MiniPlayer
+        isEmptyObject(currentSong) ? null : (
+          <MiniPlayer
             song={currentSong}
             fullScreen={fullScreen}
             playingState={playingState}
@@ -177,10 +184,11 @@ function Player (props) {
             clickPlaying={clickPlaying}
             percent={percent}
           />
+        )
       }
       {
-        isEmptyObject(currentSong) ? null
-          : <NormalPlayer
+        isEmptyObject(currentSong) ? null : (
+          <NormalPlayer
             song={currentSong}
             fullScreen={fullScreen}
             playingState={playingState}
@@ -195,6 +203,7 @@ function Player (props) {
             playMode={playMode}
             changePlayMode={changePlayMode}
           />
+        )
       }
       <audio
         ref={audioRef}
