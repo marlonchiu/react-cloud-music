@@ -7,6 +7,7 @@ import { getSongUrl, isEmptyObject, findIndex, shuffle } from '../../api/utils'
 import { playModeObject } from '../../api/config'
 import Toast from './../../baseUI/toast/index'
 import PlayList from './playList/index'
+import { getLyricRequest } from '../../api/request'
 
 // mock 数据
 // const currentSong = {
@@ -30,6 +31,7 @@ function Player (props) {
 
   const audioRef = useRef()
   const toastRef = useRef()
+  const currentLyric = useRef()
 
   const {
     fullScreen,
@@ -74,14 +76,42 @@ function Player (props) {
       // 注意，play 方法返回的是一个 promise 对象
       console.log(audioRef.current.play()) // Promise{<pending>}
       audioRef.current.play().then(() => {
-        console.log(123)
+        // console.log(123)
         setSongReady(true)
       })
     })
     togglePlayingStateDispatch(true) // 播放状态
+    // 获取歌词
+    getLyric(current.id)
     setCurrentTime(0) // 从头开始播放
     setDuration((current.dt / 1000) | 0) // 时长
   }, [playList, currentIndex])
+
+  const getLyric = id => {
+    let lyric = ''
+    if (currentLyric.current) {
+      currentLyric.current.stop()
+    }
+    // 避免songReady恒为false的情况
+    getLyricRequest(id)
+      .then(data => {
+        console.log(data)
+        lyric = data.lrc.lyric
+        if (!lyric) {
+          currentLyric.current = null
+          return
+        }
+        // currentLyric.current = new Lyric(lyric, handleLyric)
+        // currentLyric.current.play()
+        // currentLineNum.current = 0
+        // currentLyric.current.seek(0)
+      })
+      .catch(() => {
+        songReady.current = true
+        audioRef.current.play()
+      })
+  }
+
 
   useEffect(() => {
     playingState ? audioRef.current.play() : audioRef.current.pause()

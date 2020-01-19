@@ -34,3 +34,8 @@ export const getAlbumDetailRequest = id => {
 export const getSingerInfoRequest = id => {
   return axiosInstance.get(`/artists?id=${id}`)
 }
+
+// 获取歌词数据
+export const getLyricRequest = id => {
+  return axiosInstance.get(`/lyric?id=${id}`)
+}
