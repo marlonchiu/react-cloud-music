@@ -6,6 +6,7 @@ import { CSSTransition } from 'react-transition-group'
 import { prefixStyle, getName, findIndex, shuffle } from './../../../api/utils'
 import { playModeObject } from '../../../api/config'
 import Scroll from '../../../baseUI/scroll'
+import Confirm from '../../../baseUI/confirm/index'
 
 function PlayList (props) {
   const {
@@ -21,13 +22,15 @@ function PlayList (props) {
     changeCurrentIndexDispatch,
     changePlayListDispatch, // 改变播放列表
     changePlayModeDispatch,
-    deleteSongDispatch
+    deleteSongDispatch,
+    clearDispatch
   } = props
 
   const playList = immutablePlayList.toJS()
   const sequencePlayList = immutableSequencePlayList.toJS()
   const currentSong = immutableCurrentSong.toJS()
 
+  const confirmRef = useRef()
   const playListRef = useRef()
   const listWrapperRef = useRef()
   const [isShow, setIsShow] = useState(false)
@@ -111,6 +114,14 @@ function PlayList (props) {
     deleteSongDispatch(song)
   }
 
+  // 清空歌单
+  const handleShowClear = () => {
+    confirmRef.current.show()
+  }
+  const handleConfirmClear = () => {
+    clearDispatch()
+  }
+
   return (
     <CSSTransition
       in={showPlayList}
@@ -130,7 +141,7 @@ function PlayList (props) {
           <ListHeader>
             <h1 className='title'>
               {getPlayMode()}
-              <span className='iconfont clear'>&#xe63d;</span>
+              <span className='iconfont clear' onClick={handleShowClear}>&#xe63d;</span>
             </h1>
           </ListHeader>
           <ScrollWrapper>
@@ -155,6 +166,13 @@ function PlayList (props) {
               </ListContent>
             </Scroll>
           </ScrollWrapper>
+          <Confirm
+            ref={confirmRef}
+            text={'是否删除全部?'}
+            cancelBtnText={'取消'}
+            confirmBtnText={'确定'}
+            handleConfirm={handleConfirmClear}
+          />
         </div>
       </PlayListWrapper>
     </CSSTransition>
@@ -192,6 +210,19 @@ const mapDispatchToProps = (dispatch) => {
     },
     deleteSongDispatch (data) {
       dispatch(actionCreators.deleteSong(data))
+    },
+    clearDispatch () {
+      // 1.清空两个列表
+      dispatch(actionCreators.changePlayList([]))
+      dispatch(actionCreators.changeSequencePlayList([]))
+      // 2.初始currentIndex
+      dispatch(actionCreators.changeCurrentIndex(-1))
+      // 3.关闭PlayList的显示
+      dispatch(actionCreators.changeShowPlayList(false))
+      // 4.将当前歌曲置空
+      dispatch(actionCreators.changeCurrentSong({}))
+      // 5.重置播放状态
+      dispatch(actionCreators.changePlayingState(false))
     }
   }
 }
