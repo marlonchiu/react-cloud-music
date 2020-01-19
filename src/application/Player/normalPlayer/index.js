@@ -4,10 +4,11 @@ import { NormalPlayerContainer, Top, Middle, Bottom, Operators, CDWrapper, Progr
 import { CSSTransition } from 'react-transition-group'
 import animations from 'create-keyframe-animation'
 import ProgressBar from '../../../baseUI/progress-bar'
+import { playModeObject } from './../../../api/config'
 
 function NormalPlayer (props) {
-  const { song, fullScreen, playingState, percent, duration, currentTime } = props
-  const { toggleFullScreen, clickPlaying, onProgressChange } = props
+  const { song, fullScreen, playingState, percent, duration, currentTime, playMode } = props
+  const { toggleFullScreen, clickPlaying, onProgressChange, handlePrev, handleNext, changePlayMode } = props
 
   const normalPlayerRef = useRef()
   const cdWrapperRef = useRef()
@@ -75,6 +76,7 @@ function NormalPlayer (props) {
     const { x, y, scale } = _getPosAndScale()
     cdWrapperDom.style[transform] = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
   }
+
   const afterLeave = () => {
     if (!cdWrapperRef.current) return
     const cdWrapperDom = cdWrapperRef.current
@@ -82,6 +84,20 @@ function NormalPlayer (props) {
     cdWrapperDom.style[transform] = ''
     normalPlayerRef.current.style.display = 'none'
   }
+
+  // getPlayMode方法
+  const getPlayMode = () => {
+    let content
+    if (playMode === playModeObject.sequence) {
+      content = '&#xe625;'
+    } else if (playMode === playModeObject.loop) {
+      content = '&#xe653;'
+    } else {
+      content = '&#xe61b;'
+    }
+    return content
+  }
+
   return (
     <CSSTransition
       classNames='normal'
@@ -133,10 +149,10 @@ function NormalPlayer (props) {
             <div className='time time-r'>{formatPlayTime(duration)}</div>
           </ProgressWrapper>
           <Operators>
-            <div className='icon i-left'>
-              <i className='iconfont'>&#xe625;</i>
+            <div className='icon i-left' onClick={changePlayMode}>
+              <i className='iconfont' dangerouslySetInnerHTML={{ __html: getPlayMode() }} />
             </div>
-            <div className='icon i-left'>
+            <div className='icon i-left' onClick={handlePrev}>
               <i className='iconfont'>&#xe6e1;</i>
             </div>
             {/* 中间暂停按钮 */}
@@ -149,7 +165,7 @@ function NormalPlayer (props) {
                 }}
               />
             </div>
-            <div className='icon i-right'>
+            <div className='icon i-right' onClick={handleNext}>
               <i className='iconfont'>&#xe718;</i>
             </div>
             <div className='icon i-right'>

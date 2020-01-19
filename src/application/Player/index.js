@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 import * as actionCreators from './store/actionCreators'
 import MiniPlayer from './miniPlayer'
 import NormalPlayer from './normalPlayer'
-import { getSongUrl, isEmptyObject } from '../../api/utils'
+import { getSongUrl, isEmptyObject, findIndex, shuffle } from '../../api/utils'
+import Toast from './../../baseUI/toast/index'
+import { playModeObject } from '../../api/config'
 
 // mock 数据
 // const currentSong = {
@@ -20,7 +22,14 @@ function Player (props) {
   // 歌曲播放进度
   let percent = isNaN(currentTime / duration) ? 0 : currentTime / duration
 
+  // 记录当前的歌曲，以便于下次重渲染时比对是否是一首歌
+  const [preSong, setPreSong] = useState({})
+  const [modeText, setModeText] = useState('')
+  // const [songReady, setSongReady] = useState(true)
+
   const audioRef = useRef()
+  const toastRef = useRef()
+
   const {
     fullScreen,
     playingState,
@@ -38,8 +47,8 @@ function Player (props) {
     // changeSequencePlayListDispatch,
     changePlayListDispatch,
     changePlayModeDispatch,
-    changeCurrentIndexDispatch,
-    toggleShowPlayListDispatch
+    changeCurrentIndexDispatch
+    // toggleShowPlayListDispatch
   } = props
 
   const playList = immutablePlayList.toJS()
@@ -47,10 +56,16 @@ function Player (props) {
   const currentSong = immutableCurrentSong.toJS()
 
   useEffect(() => {
-    if (!playList.length || currentIndex === -1) return
+    if (
+      !playList.length ||
+      currentIndex === -1 ||
+      !playList[currentIndex] ||
+      playList[currentIndex].id === preSong.id
+    ) return
     let current = playList[currentIndex]
+    setPreSong(current)
+    // setSongReady(false)
     changeCurrentSongDispatch(current) // 赋值currentSong
-    getSongUrl(current.id)
     audioRef.current.src = getSongUrl(current.id)
     setTimeout(() => {
       audioRef.current.play()
@@ -58,7 +73,7 @@ function Player (props) {
     togglePlayingStateDispatch(true) // 播放状态
     setCurrentTime(0) // 从头开始播放
     setDuration((current.dt / 1000) | 0) // 时长
-  }, [currentIndex])
+  }, [playList, currentIndex])
 
   useEffect(() => {
     playingState ? audioRef.current.play() : audioRef.current.pause()
@@ -80,6 +95,74 @@ function Player (props) {
     if (!playingState) {
       togglePlayingStateDispatch(true)
     }
+  }
+
+  // 歌曲循环
+  const handleLoop = () => {
+    audioRef.current.currentTime = 0
+    togglePlayingStateDispatch(true)
+    audioRef.current.play()
+  }
+
+  // 前一首歌曲
+  const handlePrev = () => {
+    // 播放列表只有一首歌时单曲循环
+    if (playList.length === 1) {
+      handleLoop()
+      return
+    }
+    let index = currentIndex - 1
+    // 如果是第一首了就跳到最后一首
+    if (index < 0) index = playList.length - 1
+    if (!playingState) togglePlayingStateDispatch(true)
+    changeCurrentIndexDispatch(index)
+  }
+
+  // 前一首歌曲
+  const handleNext = () => {
+    // 播放列表只有一首歌时单曲循环
+    if (playList.length === 1) {
+      handleLoop()
+      return
+    }
+    let index = currentIndex + 1
+    // 如果是第一首了就跳到最后一首
+    if (index === playList.length) index = 0
+    if (!playingState) togglePlayingStateDispatch(true)
+    changeCurrentIndexDispatch(index)
+  }
+
+  const handleEnd = () => {
+    if (playMode === playModeObject.loop) {
+      handleLoop()
+    } else {
+      handleNext()
+    }
+  }
+
+  // 切换播放模式
+  const changePlayMode = () => {
+    const newMode = (playMode + 1) % 3
+    if (newMode === 0) {
+      // 顺序模式
+      changePlayListDispatch(sequencePlayList)
+      const index = findIndex(currentSong, sequencePlayList)
+      changeCurrentIndexDispatch(index)
+      setModeText('顺序循环')
+    } else if (newMode === 1) {
+      // 单曲循环
+      changePlayListDispatch(sequencePlayList)
+      setModeText('单曲循环')
+    } else if (newMode === 2) {
+      // 随机播放
+      const newList = shuffle(sequencePlayList)
+      const index = findIndex(currentSong, newList)
+      changePlayListDispatch(newList)
+      changeCurrentIndexDispatch(index)
+      setModeText('随机播放')
+    }
+    changePlayModeDispatch(newMode)
+    toastRef.current.show()
   }
 
   return (
@@ -107,9 +190,18 @@ function Player (props) {
             toggleFullScreen={toggleFullScreenDispatch}
             clickPlaying={clickPlaying}
             onProgressChange={onProgressChange}
+            handlePrev={handlePrev}
+            handleNext={handleNext}
+            playMode={playMode}
+            changePlayMode={changePlayMode}
           />
       }
-      <audio ref={audioRef} onTimeUpdate={updateTime} />
+      <audio
+        ref={audioRef}
+        onTimeUpdate={updateTime}
+        onEnded={handleEnd}
+      />
+      <Toast text={modeText} ref={toastRef} />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 import * as actionTypes from './constants'
 import { fromJS } from 'immutable'
-import { playMode } from './../../../api/config'
+import { playModeObject } from './../../../api/config'
 
 const defaultState = fromJS({
   currentSong: {},
@@ -8,7 +8,7 @@ const defaultState = fromJS({
   playingState: false, // 当前歌曲是否播放
   sequencePlayList: [], // 顺序列表(因为之后会有随机模式，列表会乱序，因从拿这个保存顺序列表)
   playList: [],
-  playMode: playMode.sequence, // 播放模式
+  playMode: playModeObject.sequence, // 播放模式
   currentIndex: 0, // 当前歌曲在播放列表的索引位置
   showPlayList: false // 是否展示播放列表
 })
