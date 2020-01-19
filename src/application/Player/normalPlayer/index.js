@@ -8,7 +8,7 @@ import { playModeObject } from './../../../api/config'
 
 function NormalPlayer (props) {
   const { song, fullScreen, playingState, percent, duration, currentTime, playMode } = props
-  const { toggleFullScreen, clickPlaying, onProgressChange, handlePrev, handleNext, changePlayMode } = props
+  const { toggleFullScreen, clickPlaying, onProgressChange, handlePrev, handleNext, changePlayMode, changeShowPlayList } = props
 
   const normalPlayerRef = useRef()
   const cdWrapperRef = useRef()
@@ -98,6 +98,11 @@ function NormalPlayer (props) {
     return content
   }
 
+  const handleToggleShowPlayList = (e) => {
+    changeShowPlayList(true)
+    e.stopPropagation()
+  }
+
   return (
     <CSSTransition
       classNames='normal'
@@ -168,7 +173,7 @@ function NormalPlayer (props) {
             <div className='icon i-right' onClick={handleNext}>
               <i className='iconfont'>&#xe718;</i>
             </div>
-            <div className='icon i-right'>
+            <div className='icon i-right' onClick={handleToggleShowPlayList}>
               <i className='iconfont'>&#xe640;</i>
             </div>
           </Operators>

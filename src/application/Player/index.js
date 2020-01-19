@@ -4,8 +4,9 @@ import * as actionCreators from './store/actionCreators'
 import MiniPlayer from './miniPlayer'
 import NormalPlayer from './normalPlayer'
 import { getSongUrl, isEmptyObject, findIndex, shuffle } from '../../api/utils'
-import Toast from './../../baseUI/toast/index'
 import { playModeObject } from '../../api/config'
+import Toast from './../../baseUI/toast/index'
+import PlayList from './playList/index'
 
 // mock 数据
 // const currentSong = {
@@ -47,8 +48,8 @@ function Player (props) {
     // changeSequencePlayListDispatch,
     changePlayListDispatch,
     changePlayModeDispatch,
-    changeCurrentIndexDispatch
-    // toggleShowPlayListDispatch
+    changeCurrentIndexDispatch,
+    toggleShowPlayListDispatch
   } = props
 
   const playList = immutablePlayList.toJS()
@@ -183,6 +184,7 @@ function Player (props) {
             toggleFullScreen={toggleFullScreenDispatch}
             clickPlaying={clickPlaying}
             percent={percent}
+            changeShowPlayList={toggleShowPlayListDispatch}
           />
         )
       }
@@ -202,6 +204,7 @@ function Player (props) {
             handleNext={handleNext}
             playMode={playMode}
             changePlayMode={changePlayMode}
+            changeShowPlayList={toggleShowPlayListDispatch}
           />
         )
       }
@@ -210,6 +213,8 @@ function Player (props) {
         onTimeUpdate={updateTime}
         onEnded={handleEnd}
       />
+      {/* 显示播放列表 */}
+      <PlayList />
       <Toast text={modeText} ref={toastRef} />
     </div>
   )
