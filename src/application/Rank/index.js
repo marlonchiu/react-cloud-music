@@ -9,7 +9,7 @@ import { EnterLoading } from './../Singers/style'
 import { renderRoutes } from 'react-router-config'
 
 function Rank (props) {
-  const { rankList: list, enterLoading } = props
+  const { rankList: list, enterLoading, songsCount } = props
   const { getRankListDataDispatch } = props
 
   const rankList = list ? list.toJS() : []
@@ -69,7 +69,7 @@ function Rank (props) {
   // 榜单数据未加载出来之前都给隐藏
   const LoadingDisplayStyle = enterLoading ? { display: 'none' } : { display: '' }
   return (
-    <Container>
+    <Container play={songsCount}>
       <Scroll>
         <div>
           <h1 className='offical' style={LoadingDisplayStyle}>官方榜</h1>
@@ -87,11 +87,12 @@ function Rank (props) {
 // 映射Redux全局的state到组件的props上
 const mapStateToProps = (state) => ({
   rankList: state.getIn(['rank', 'rankList']),
-  enterLoading: state.getIn(['rank', 'enterLoading'])
+  enterLoading: state.getIn(['rank', 'enterLoading']),
+  songsCount: state.getIn(['player', 'playList']).size
 })
 
 // 映射dispatch到props上
-const mapDispatchToProps = (dispatch) => { 
+const mapDispatchToProps = (dispatch) => {
   return {
     // 排行榜数据
     getRankListDataDispatch () {

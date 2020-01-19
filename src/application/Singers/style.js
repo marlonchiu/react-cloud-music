@@ -14,7 +14,8 @@ export const ListContainer = styled.div`
   position: fixed;
   top: 160px;
   left: 0;
-  bottom: 0;
+  /* bottom: 0; */
+  bottom: ${props => props.play > 0 ? '60px' : 0};
   overflow: hidden;
   width: 100%;
 `
@@ -56,9 +57,9 @@ export const ListItem = styled.div`
 
 export const EnterLoading = styled.div`
   position: fixed;
-  left: 0; 
-  right: 0; 
-  top: 0; 
+  left: 0;
+  right: 0;
+  top: 0;
   bottom: 0;
   width: 100px;
   height: 100px;

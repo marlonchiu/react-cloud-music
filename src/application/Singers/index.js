@@ -26,7 +26,7 @@ function Singers (props) {
   // 拿到category和alpha的值
   const { category, alpha } = data.toJS()
 
-  const { singerList, enterLoading, pullUpLoading, pullDownLoading, pageCount } = props
+  const { singerList, enterLoading, pullUpLoading, pullDownLoading, pageCount, songsCount } = props
   const { getHotSingerListDataDispatch, getSingerListDataDispatch, pullDownRefreshDispatch, pullUpRefreshDispatch } = props
 
   useEffect(() => {
@@ -88,7 +88,7 @@ function Singers (props) {
         <NavContainer>
           <Horizen
             list={categoryTypes}
-            title={'分类（默认热门）:'}
+            title='分类（默认热门）:'
             oldVal={category}
             handleClick={(val) => handleUpdateCatetory(val)}
           />
@@ -99,7 +99,7 @@ function Singers (props) {
             handleClick={(val) => handleUpdateAlpha(val)}
           />
         </NavContainer>
-        <ListContainer>
+        <ListContainer play={songsCount}>
           <Scroll
             onScroll={forceCheck}
             pullUp={handlePullUp}
@@ -124,7 +124,8 @@ const mapStateToProps = (state) => ({
   enterLoading: state.getIn(['singers', 'enterLoading']),
   pullUpLoading: state.getIn(['singers', 'pullUpLoading']),
   pullDownLoading: state.getIn(['singers', 'pullDownLoading']),
-  pageCount: state.getIn(['singers', 'pageCount'])
+  pageCount: state.getIn(['singers', 'pageCount']),
+  songsCount: state.getIn(['player', 'playList']).size
 })
 
 // 映射dispatch到props上

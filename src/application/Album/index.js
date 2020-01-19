@@ -23,7 +23,7 @@ function Album (props) {
   const headerEl = useRef()
   // 从路由中拿到歌单的id
   const id = props.match.params.id
-  const { currentAlbum: currentAlbumImmutable, enterLoading } = props
+  const { currentAlbum: currentAlbumImmutable, enterLoading, songsCount } = props
   const { getAlbumDataDispatch } = props
 
   useEffect(() => {
@@ -121,7 +121,7 @@ function Album (props) {
       unmountOnExit
       onExited={() => props.history.goBack()}
     >
-      <Container>
+      <Container play={songsCount}>
         <Header ref={headerEl} title={title} isMarquee={isMarquee} handleClick={handleBack} />
         {/* 布局代码 */}
         {
@@ -153,7 +153,8 @@ function Album (props) {
 const mapStateToProps = (state) => ({
   // 不要再这里将数据toJS,不然每次diff比对props的时候都是不一样的引用，还是导致不必要的重渲染, 属于滥用immutable
   currentAlbum: state.getIn(['album', 'currentAlbum']),
-  enterLoading: state.getIn(['album', 'enterLoading'])
+  enterLoading: state.getIn(['album', 'enterLoading']),
+  songsCount: state.getIn(['player', 'playList']).size
 })
 
 // 映射dispatch到props上
