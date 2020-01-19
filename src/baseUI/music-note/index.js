@@ -23,7 +23,7 @@ const Container = styled.div`
 const MusicNote = forwardRef((props, ref) => {
   const iconsRef = useRef()
   // 容器中有 3 个音符，也就是同时只能有 3 个音符下落
-  const ICON_NUMBER = 3
+  const ICON_NUMBER = 10
 
   const transform = prefixStyle('transform')
 
@@ -46,7 +46,8 @@ const MusicNote = forwardRef((props, ref) => {
     domArray.forEach(item => {
       item.running = false
       item.addEventListener('transitionend', function () {
-        this.style['display'] = 'none'
+        // this.style['display'] = 'none'
+        this.style.display = 'none'
         this.style[transform] = 'translate3d(0, 0, 0)'
         this.running = false
 

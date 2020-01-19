@@ -134,7 +134,7 @@ function Singer (props) {
           </Scroll>
         </SongListWrapper>
         {enterLoading ? <Loading /> : null}
-        <MusicNote ref={musicNoteRef}>{' '}</MusicNote>
+        <MusicNote ref={musicNoteRef} />
       </Container>
     </CSSTransition>
   )
