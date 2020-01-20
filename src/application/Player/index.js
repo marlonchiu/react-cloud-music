@@ -9,6 +9,7 @@ import Toast from './../../baseUI/toast/index'
 import PlayList from './playList/index'
 import { getLyricRequest } from '../../api/request'
 import Lyric from 'lyric-parser'
+// import Lyric from '../../api/lyric-parser'
 
 // mock 数据
 // const currentSong = {
@@ -24,6 +25,7 @@ function Player (props) {
   const [duration, setDuration] = useState(0)
   // 歌曲播放进度
   let percent = isNaN(currentTime / duration) ? 0 : currentTime / duration
+  // 记录播放到 那一条 currentPlayingLyric 变量
   const [currentPlayingLyric, setPlayingLyric] = useState('')
   // 记录当前的歌曲，以便于下次重渲染时比对是否是一首歌
   const [preSong, setPreSong] = useState({})
@@ -32,7 +34,9 @@ function Player (props) {
 
   const audioRef = useRef()
   const toastRef = useRef()
+  // 当前歌曲的歌词
   const currentLyric = useRef()
+  // 记录当前行数的 currentLineNum
   const currentLineNum = useRef(0)
 
   const {
@@ -100,7 +104,7 @@ function Player (props) {
     if (currentLyric.current) {
       currentLyric.current.stop()
     }
-    // 避免songReady恒为false的情况
+    // 避免 songReady 恒为 false 的情况
     getLyricRequest(id)
       .then(data => {
         console.log(data)
@@ -111,9 +115,9 @@ function Player (props) {
         }
         currentLyric.current = new Lyric(lyric, handleLyric)
         console.log(currentLyric.current)
-        // currentLyric.current.play()
-        // currentLineNum.current = 0
-        // currentLyric.current.seek(0)
+        currentLyric.current.play()
+        currentLineNum.current = 0
+        currentLyric.current.seek(0)
       })
       .catch(() => {
         songReady.current = true
@@ -128,6 +132,10 @@ function Player (props) {
   const clickPlaying = (e, state) => {
     e.stopPropagation()
     togglePlayingStateDispatch(state)
+    // 歌词变化
+    if (currentLyric.current) {
+      currentLyric.current.togglePlay(currentTime * 1000)
+    }
   }
 
   const updateTime = e => {
@@ -140,6 +148,10 @@ function Player (props) {
     audioRef.current.currentTime = newTime
     if (!playingState) {
       togglePlayingStateDispatch(true)
+    }
+    // 歌词变化
+    if (currentLyric.current) {
+      currentLyric.current.seek(newTime * 1000)
     }
   }
 
@@ -243,6 +255,9 @@ function Player (props) {
             playMode={playMode}
             changePlayMode={changePlayMode}
             changeShowPlayList={toggleShowPlayListDispatch}
+            currentLyric={currentLyric.current}
+            currentLineNum={currentLineNum.current}
+            currentPlayingLyric={currentPlayingLyric}
           />
         )
       }

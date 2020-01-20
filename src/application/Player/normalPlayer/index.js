@@ -1,17 +1,24 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { getName, prefixStyle, formatPlayTime } from '../../../api/utils'
-import { NormalPlayerContainer, Top, Middle, Bottom, Operators, CDWrapper, ProgressWrapper } from './style'
+import { NormalPlayerContainer, Top, Middle, Bottom, Operators, CDWrapper, ProgressWrapper, LyricContainer, LyricWrapper } from './style'
 import { CSSTransition } from 'react-transition-group'
 import animations from 'create-keyframe-animation'
 import ProgressBar from '../../../baseUI/progress-bar'
 import { playModeObject } from './../../../api/config'
+import Scroll from '../../../baseUI/scroll'
 
 function NormalPlayer (props) {
-  const { song, fullScreen, playingState, percent, duration, currentTime, playMode } = props
+  const { song, fullScreen, playingState, percent, duration, currentTime, playMode,
+    currentLyric, currentLineNum, currentPlayingLyric
+  } = props
   const { toggleFullScreen, clickPlaying, onProgressChange, handlePrev, handleNext, changePlayMode, changeShowPlayList } = props
 
   const normalPlayerRef = useRef()
   const cdWrapperRef = useRef()
+  // 保存一个状态，根据它来显示不同的内容 是现实歌词还是CD唱片动画
+  const currentState = useRef('')
+  const lyricScrollRef = useRef()
+  const lyricLineRefs = useRef([])
 
   const transform = prefixStyle('transform')
 
@@ -83,6 +90,8 @@ function NormalPlayer (props) {
     cdWrapperDom.style.transition = ''
     cdWrapperDom.style[transform] = ''
     normalPlayerRef.current.style.display = 'none'
+    // 离开将歌词和CD状态初始化
+    currentState.current = ''
   }
 
   // getPlayMode方法
@@ -102,6 +111,28 @@ function NormalPlayer (props) {
     changeShowPlayList(true)
     e.stopPropagation()
   }
+
+  const toggleCurrentState = () => {
+    if (currentState.current !== 'lyric') {
+      currentState.current = 'lyric'
+    } else {
+      currentState.current = ''
+    }
+  }
+  // currentLineNum 变量，当它改变时，来进行一些歌词滚动操作
+  useEffect(() => {
+    if (!lyricScrollRef.current) return
+    let lyricBScroll = lyricScrollRef.current.getBScroll()
+    if (currentLineNum > 5) {
+      // 保持当前歌词在减去 5 条的位置
+      let lineEl = lyricLineRefs.current[currentLineNum - 5].current
+      lyricBScroll.scrollTo(lineEl, 1000)
+    } else {
+      // 当前歌词行数 <=5, 直接滚动到最顶端
+      lyricBScroll.scrollTo(0, 0, 1000)
+    }
+
+  }, [currentLineNum])
 
   return (
     <CSSTransition
@@ -131,16 +162,54 @@ function NormalPlayer (props) {
           <h1 className='title'>{song.name}</h1>
           <h1 className='subtitle'>{getName(song.ar)}</h1>
         </Top>
-        <Middle ref={cdWrapperRef}>
-          <CDWrapper>
-            <div className='cd'>
-              <img
-                className={`image play ${playingState ? '' : 'pause'}`}
-                src={song.al.picUrl + '?param=400x400'}
-                alt=''
-              />
-            </div>
-          </CDWrapper>
+        <Middle ref={cdWrapperRef} onClick={toggleCurrentState}>
+          <CSSTransition
+            timeout={400}
+            classNames='fade'
+            in={currentState.current !== 'lyric'}
+          >
+            <CDWrapper style={{ visibility: currentState.current !== 'lyric' ? 'visible' : 'hidden' }}>
+              <div className='cd'>
+                <img
+                  className={`image play ${playingState ? '' : 'pause'}`}
+                  src={song.al.picUrl + '?param=400x400'}
+                  alt=''
+                />
+              </div>
+              <p className='playing_lyric'>{currentPlayingLyric}</p>
+            </CDWrapper>
+          </CSSTransition>
+          <CSSTransition
+            timeout={400}
+            classNames='fade'
+            in={currentState.current === 'lyric'}
+          >
+            <LyricContainer>
+              <Scroll ref={lyricScrollRef}>
+                <LyricWrapper
+                  style={{ visibility: currentState.current === 'lyric' ? 'visible' : 'hidden' }}
+                  className='lyric_wrapper'
+                >
+                  {
+                    currentLyric
+                      ? currentLyric.lines.map ((item, index) => {
+                      // 拿到每一行歌词的 DOM 对象，后面滚动歌词需要！
+                      lyricLineRefs.current[index] = React.createRef()
+                      return (
+                        <p
+                          className={`text ${currentLineNum === index ? 'current' : ''}`}
+                          key={item + index}
+                          ref={lyricLineRefs.current[index]}
+                        >
+                          {item.txt}
+                        </p>
+                      )
+                    })
+                  : <p className='text pure'> 纯音乐，请欣赏。</p>}
+                </LyricWrapper>
+              </Scroll>
+            </LyricContainer>
+          </CSSTransition>
         </Middle>
         <Bottom className='bottom'>
           <ProgressWrapper>
