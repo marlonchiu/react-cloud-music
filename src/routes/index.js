@@ -51,6 +51,13 @@ const routes = [
           }
         ]
       },
+      // 增加 album 路由，用来显示歌单
+      {
+        path: '/album/:id',
+        exact: true,
+        key: 'album',
+        component: Album
+      },
       {
         path: '/search',
         exact: true,

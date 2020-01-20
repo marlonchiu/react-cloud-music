@@ -1,4 +1,5 @@
 import * as actionTypes from './constants'
+import { getSongDetailRequest } from '../../../api/request'
 import { fromJS } from 'immutable'
 
 export const changeCurrentSong = (data) => ({

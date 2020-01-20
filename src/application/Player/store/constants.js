@@ -24,3 +24,6 @@ export const SET_SHOW_PLAYLIST = 'player/SET_SHOW_PLAYLIST'
 
 // 删除歌曲
 export const DELETE_SONG = 'player/DELETE_SONG'
+
+// 插入歌曲
+export const INSERT_SONG = 'player/INSERT_SONG'
