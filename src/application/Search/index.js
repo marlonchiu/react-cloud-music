@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { connect } from 'react-redux'
 import * as actionCreators from './store/actionCreators'
 import { CSSTransition } from 'react-transition-group'
@@ -7,7 +7,9 @@ import LazyLoad, { forceCheck } from 'react-lazyload'
 import SearchBox from './../../baseUI/search-box/index'
 import Scroll from './../../baseUI/scroll'
 import Loading from './../../baseUI/loading/index'
+import MusicNote from '../../baseUI/music-note/index'
 import { getName } from '../../api/utils'
+import { getSongDetail } from './../Player/store/actionCreators'
 
 function Search (props) {
   // 控制动画
@@ -22,9 +24,11 @@ function Search (props) {
     songsList: immutableSongsList,
     enterLoading
   } = props
-  const { getHotKeyWordsDispatch, getSuggestListDispatch, changeEnterLoadingDispatch } = props
+  const { getHotKeyWordsDispatch, getSuggestListDispatch, changeEnterLoadingDispatch, getSongDetailDispatch } = props
   const suggestList = immutableSuggestList.toJS();
   const songsList = immutableSongsList.toJS()
+
+  const musicNoteRef = useRef()
 
   // 显示搜索页面
   useEffect (() => {
@@ -52,7 +56,9 @@ function Search (props) {
   }
 
   const selectItem = (e, id) => {
-
+    console.log(id)
+    getSongDetailDispatch(id)
+    musicNoteRef.current.startAnimation({ x: e.nativeEvent.clientX, y: e.nativeEvent.clientY })
   }
 
   // 1. 当搜索框为空，展示热门搜索列表
@@ -152,7 +158,7 @@ function Search (props) {
     unmountOnExit
     onExited={() => props.history.goBack ()}
     >
-      <Container>
+      <Container play={songsCount}>
         <SearchBox back={searchBack} newQuery={query} handleQuery={handleQuery} />
         <ShortcutWrapper show={!query}>
           <Scroll>
@@ -173,6 +179,7 @@ function Search (props) {
             </div>
           </Scroll>
           {enterLoading ? <Loading></Loading> : null}
+          <MusicNote ref={musicNoteRef}></MusicNote>
         </ShortcutWrapper>
       </Container>
   </CSSTransition>
@@ -198,6 +205,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     changeEnterLoadingDispatch (data) {
       dispatch(actionCreators.changeEnterLoading(data))
+    },
+    getSongDetailDispatch (id) {
+      dispatch(getSongDetail(id))
     }
   }
 }
