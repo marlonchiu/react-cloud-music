@@ -27,3 +27,30 @@ export const Container = styled.div`
     transform: translate3d(100%, 0, 0);
   }
 `
+
+export const ShortcutWrapper = styled.div`
+  position: absolute;
+  top: 40px;
+  bottom: 0;
+  width: 100%;
+  display: ${props => props.show ? '' : 'none'};
+`
+
+export const HotKey = styled.div`
+  margin: 0 20px 20px 20px;
+  .title {
+    padding-top: 35px;
+    margin-bottom: 20px;
+    font-size: ${style['font-size-m']};
+    color: ${style['font-color-desc-v2']};
+  }
+  .item {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 20px 10px 0;
+    border-radius: 6px;
+    background: ${style['highlight-background-color']};
+    font-size: ${style['font-size-m']};
+    color: ${style['font-color-desc']};
+  }
+`
