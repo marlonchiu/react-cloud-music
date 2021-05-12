@@ -22,7 +22,7 @@
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.3.0",
     "styled-components": "^4.4.0",
-    "swiper": "^5.0.4"
+    "swiper": "^6.5.1"
   },
   "scripts": {
     "server": "cd NeteaseCloudMusicApi && set PORT=4000 && node app.js",
